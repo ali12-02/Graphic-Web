@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "Project 1",
+    "category": "Branding",
+    "description": "...",
+    "image": "/images/project1.jpg"
+  },
+  {
+    "id": 2,
+    "title": "Project 2",
+    "category": "UI/UX",
+    "description": "...",
+    "image": "/images/project2.jpg"
+  }
+]

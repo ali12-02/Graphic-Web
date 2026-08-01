@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --x: 50%;
+  --y: 50%;
+}
+
+.spotlight {
+  -webkit-mask-image: radial-gradient(
+    circle 420px at var(--x) var(--y),
+    transparent 0px,
+    transparent 120px,
+    rgba(0, 0, 0, 0.08) 180px,
+    rgba(0, 0, 0, 0.25) 240px,
+    rgba(0, 0, 0, 0.5) 300px,
+    rgba(0, 0, 0, 0.8) 360px,
+    black 420px
+  );
+
+  mask-image: radial-gradient(
+    circle 420px at var(--x) var(--y),
+    transparent 0px,
+    transparent 120px,
+    rgba(0, 0, 0, 0.08) 180px,
+    rgba(0, 0, 0, 0.25) 240px,
+    rgba(0, 0, 0, 0.5) 300px,
+    rgba(0, 0, 0, 0.8) 360px,
+    black 420px
+  );
+
+  transition: mask-position 0.15s linear;
+}
