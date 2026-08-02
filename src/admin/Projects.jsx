@@ -11,11 +11,24 @@ function Projects() {
   const [editingProject, setEditingProject] = useState(null);
 
   // Load Projects
-  useEffect(() => {
+  const loadProjects = () => {
     const savedProjects =
       JSON.parse(localStorage.getItem("projects")) || [];
 
     setProjects(savedProjects);
+  };
+
+  useEffect(() => {
+    loadProjects();
+
+    window.addEventListener("projectsUpdated", loadProjects);
+
+    return () => {
+      window.removeEventListener(
+        "projectsUpdated",
+        loadProjects
+      );
+    };
   }, []);
 
   // Save / Update
@@ -42,15 +55,25 @@ function Projects() {
           description: project.description,
           image: project.image || "",
           pdf: project.pdf || "",
-          status: "Published",
+          status: project.status || "Published",
+          featured: project.featured || false,
+          createdAt:
+            project.createdAt ||
+            new Date().toISOString(),
         },
       ];
     }
 
     setProjects(updatedProjects);
+
     localStorage.setItem(
       "projects",
       JSON.stringify(updatedProjects)
+    );
+
+    // Dashboard & RecentProjects update
+    window.dispatchEvent(
+      new Event("projectsUpdated")
     );
 
     setEditingProject(null);
@@ -69,6 +92,10 @@ function Projects() {
       "projects",
       JSON.stringify(updatedProjects)
     );
+
+    window.dispatchEvent(
+      new Event("projectsUpdated")
+    );
   };
 
   // Edit
@@ -77,25 +104,28 @@ function Projects() {
     setIsModalOpen(true);
   };
 
-  // Close
+  // Close Modal
   const handleCloseModal = () => {
     setEditingProject(null);
     setIsModalOpen(false);
   };
 
-  const filteredProjects = projects.filter(
-    (project) =>
-      project.title
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      project.category
-        .toLowerCase()
-        .includes(search.toLowerCase())
-  );
+  // Search
+  const filteredProjects = projects.filter((project) => {
+    const title = project.title || "";
+    const category = project.category || "";
+
+    return (
+      title.toLowerCase().includes(search.toLowerCase()) ||
+      category.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   return (
     <DashboardLayout>
+      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
+
         <div>
           <h1 className="text-4xl font-bold text-white">
             Projects
@@ -116,9 +146,12 @@ function Projects() {
           <Plus size={18} />
           New Project
         </button>
+
       </div>
 
+      {/* Search */}
       <div className="mb-6 flex items-center rounded-2xl border border-white/10 bg-[#111] px-4 py-3">
+
         <Search
           size={18}
           className="text-gray-500"
@@ -133,14 +166,17 @@ function Projects() {
           }
           className="ml-3 w-full bg-transparent text-white placeholder:text-gray-500 outline-none"
         />
+
       </div>
 
+      {/* Table */}
       <ProjectTable
         projects={filteredProjects}
         onDelete={handleDelete}
         onEdit={handleEdit}
       />
 
+      {/* Modal */}
       <AddProjectModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

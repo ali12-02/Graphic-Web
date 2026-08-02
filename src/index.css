@@ -5,6 +5,10 @@
   --y: 50%;
 }
 
+/* =========================
+   Spotlight Effect
+========================= */
+
 .spotlight {
   -webkit-mask-image: radial-gradient(
     circle 420px at var(--x) var(--y),
@@ -29,4 +33,162 @@
   );
 
   transition: mask-position 0.15s linear;
+}
+
+/* =========================
+   Smooth Scroll
+========================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* =========================
+   Body
+========================= */
+
+body {
+  background: #000;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* =========================
+   Animated Gradient
+========================= */
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+}
+
+/* =========================
+   Floating Animation
+========================= */
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+
+  25% {
+    transform: translateY(-15px) translateX(10px);
+  }
+
+  50% {
+    transform: translateY(-30px) translateX(-10px);
+  }
+
+  75% {
+    transform: translateY(-10px) translateX(15px);
+  }
+
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+}
+
+.float {
+  animation: float 10s ease-in-out infinite;
+}
+
+.float-slow {
+  animation: float 16s ease-in-out infinite;
+}
+
+.float-fast {
+  animation: float 7s ease-in-out infinite;
+}
+
+/* =========================
+   Fade Up
+========================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 1s ease forwards;
+}
+
+/* =========================
+   Glow
+========================= */
+
+.glow {
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 0.4),
+    0 0 40px rgba(168, 85, 247, 0.3),
+    0 0 80px rgba(168, 85, 247, 0.25);
+}
+
+/* =========================
+   Glass Effect
+========================= */
+
+.glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  background: rgba(255,255,255,.05);
+
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+/* =========================
+   Selection
+========================= */
+
+::selection {
+  background: #a855f7;
+  color: white;
+}
+
+/* =========================
+   Scrollbar
+========================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    #7c3aed,
+    #a855f7,
+    #d946ef
+  );
+
+  border-radius: 30px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9333ea;
 }

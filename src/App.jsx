@@ -11,13 +11,16 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Work from "./pages/Work";
 import Contact from "./pages/Contact";
+import ProjectPreview from "./pages/ProjectPreview";
 
 import Login from "./admin/Login";
 import Dashboard from "./admin/Dashboard";
 import ProjectsAdmin from "./admin/Projects";
 import Categories from "./admin/Categories";
-import Gallery from "./admin/Gallery"; // NEW
+import Gallery from "./admin/Gallery";
 import ProtectedRoute from "./admin/ProtectedRoute";
+import AboutSection from "./sections/AboutSection";
+
 
 function App() {
   const location = useLocation();
@@ -26,10 +29,15 @@ function App() {
     location.pathname === "/admin" ||
     location.pathname.startsWith("/dashboard");
 
+  const isProjectPreview =
+    location.pathname.startsWith("/project/");
+
+  const hideLayout = isAdminPage || isProjectPreview;
+
   return (
     <>
-      {!isAdminPage && <Navbar />}
-      {!isAdminPage && <MouseReveal />}
+      {!hideLayout && <MouseReveal />}
+      {!hideLayout && <Navbar />}
 
       <Routes>
         {/* Home */}
@@ -37,9 +45,10 @@ function App() {
           path="/"
           element={
             <>
-              <Hero />
-              <Projects />
-            </>
+  <Hero />
+  <AboutSection />
+  <Projects />
+</>
           }
         />
 
@@ -49,8 +58,17 @@ function App() {
         <Route path="/work" element={<Work />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* Admin */}
-        <Route path="/admin" element={<Login />} />
+        {/* Project Preview */}
+        <Route
+          path="/project/:id"
+          element={<ProjectPreview />}
+        />
+
+        {/* Admin Login */}
+        <Route
+          path="/admin"
+          element={<Login />}
+        />
 
         {/* Dashboard */}
         <Route
@@ -93,7 +111,7 @@ function App() {
         />
       </Routes>
 
-      {!isAdminPage && <Footer />}
+      {!hideLayout && <Footer />}
     </>
   );
 }

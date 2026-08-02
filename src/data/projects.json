@@ -3,14 +3,20 @@
     "id": 1,
     "title": "Project 1",
     "category": "Branding",
-    "description": "...",
-    "image": "/images/project1.jpg"
+    "description": "Modern branding identity",
+    "image": "/projects/project1.jpg",
+    "status": "Published",
+    "featured": true,
+    "createdAt": "2026-08-02"
   },
   {
     "id": 2,
     "title": "Project 2",
     "category": "UI/UX",
-    "description": "...",
-    "image": "/images/project2.jpg"
+    "description": "Premium UI Design",
+    "image": "/projects/project2.jpg",
+    "status": "Draft",
+    "featured": false,
+    "createdAt": "2026-08-01"
   }
 ]

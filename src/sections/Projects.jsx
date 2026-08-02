@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import defaultProjects from "../data/projects.json";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedProjects =
@@ -20,10 +22,14 @@ function Projects() {
     }
   }, []);
 
-  return (
-    <section className="bg-[#050505] py-32 px-6">
-      <div className="mx-auto max-w-7xl">
+  const openProject = (projectId) => {
+    const url = `${window.location.origin}/project/${projectId}`;
+    window.open(url, "_blank");
+  };
 
+  return (
+    <section className="bg-[#050505] px-6 py-32">
+      <div className="mx-auto max-w-7xl">
         <p className="mb-4 uppercase tracking-[6px] text-gray-400">
           Selected Work
         </p>
@@ -33,7 +39,6 @@ function Projects() {
         </h2>
 
         <div className="space-y-20">
-
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
@@ -44,10 +49,10 @@ function Projects() {
                 delay: index * 0.1,
               }}
               viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-[35px] border border-white/10 bg-[#0b0b0b]"
+              onClick={() => openProject(project.id)}
+              className="group relative cursor-pointer overflow-hidden rounded-[35px] border border-white/10 bg-[#0b0b0b] transition hover:border-purple-500"
             >
               <div className="relative overflow-hidden">
-
                 <img
                   src={
                     project.image && project.image !== ""
@@ -65,11 +70,9 @@ function Projects() {
                     {project.category}
                   </span>
                 </div>
-
               </div>
 
               <div className="absolute bottom-0 left-0 w-full p-10">
-
                 <h3 className="text-5xl font-bold text-white">
                   {project.title}
                 </h3>
@@ -78,24 +81,33 @@ function Projects() {
                   {project.description}
                 </p>
 
-                {project.pdf && (
-                  <a
-                    href={project.pdf}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-6 inline-block rounded-xl bg-purple-600 px-6 py-3 text-white transition hover:bg-purple-700"
+                <div className="mt-8 flex gap-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openProject(project.id);
+                    }}
+                    className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-gray-200"
                   >
-                    View PDF
-                  </a>
-                )}
+                    View Project
+                  </button>
 
+                  {project.pdf && (
+                    <a
+                      href={project.pdf}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="rounded-xl bg-purple-600 px-6 py-3 text-white transition hover:bg-purple-700"
+                    >
+                      View PDF
+                    </a>
+                  )}
+                </div>
               </div>
-
             </motion.div>
           ))}
-
         </div>
-
       </div>
     </section>
   );

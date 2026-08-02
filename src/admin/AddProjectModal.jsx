@@ -25,26 +25,26 @@ function AddProjectModal({
 
   // Edit Mode
   useEffect(() => {
-    if (isOpen) {
-      if (editProject) {
-        setTitle(editProject.title || "");
-        setCategory(editProject.category || "");
-        setDescription(editProject.description || "");
-        setImage(editProject.image || "");
-        setPdf(editProject.pdf || "");
-      } else {
-        setTitle("");
-        setCategory("");
-        setDescription("");
-        setImage("");
-        setPdf("");
-      }
+    if (!isOpen) return;
+
+    if (editProject) {
+      setTitle(editProject.title || "");
+      setCategory(editProject.category || "");
+      setDescription(editProject.description || "");
+      setImage(editProject.image || "");
+      setPdf(editProject.pdf || "");
+    } else {
+      setTitle("");
+      setCategory("");
+      setDescription("");
+      setImage("");
+      setPdf("");
     }
   }, [isOpen, editProject]);
 
   if (!isOpen) return null;
 
-  // Image Upload
+  // Upload Image
   const handleImage = (e) => {
     const file = e.target.files[0];
 
@@ -59,7 +59,7 @@ function AddProjectModal({
     reader.readAsDataURL(file);
   };
 
-  // PDF Upload
+  // Upload PDF
   const handlePdf = (e) => {
     const file = e.target.files[0];
 
@@ -74,9 +74,10 @@ function AddProjectModal({
     reader.readAsDataURL(file);
   };
 
+  // Save
   const handleSubmit = () => {
     if (!title.trim() || !category.trim()) {
-      alert("Please fill all required fields");
+      alert("Please fill all required fields.");
       return;
     }
 
@@ -86,80 +87,109 @@ function AddProjectModal({
       description,
       image,
       pdf,
-      status: "Published",
+
+      status: editProject?.status || "Published",
+
+      featured: editProject?.featured || false,
+
+      createdAt:
+        editProject?.createdAt ||
+        new Date().toISOString(),
     });
+
+    // Notify dashboard
+    window.dispatchEvent(
+      new Event("projectsUpdated")
+    );
 
     handleClose();
   };
 
+  // Close Modal
   const handleClose = () => {
     setTitle("");
     setCategory("");
     setDescription("");
     setImage("");
     setPdf("");
+
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto">
-      <div className="my-10 w-full max-w-xl rounded-2xl border border-white/10 bg-[#111] p-6">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-black/70 backdrop-blur-sm">
 
-        <div className="mb-6 flex items-center justify-between">
+      <div className="my-10 w-full max-w-2xl rounded-3xl border border-white/10 bg-[#111111] p-8">
 
-          <h2 className="text-2xl font-bold text-white">
-            {editProject ? "Edit Project" : "Add Project"}
-          </h2>
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+
+          <div>
+            <h2 className="text-3xl font-bold text-white">
+              {editProject ? "Edit Project" : "Add Project"}
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-400">
+              Fill the project information below.
+            </p>
+          </div>
 
           <button
             onClick={handleClose}
-            className="rounded-lg p-2 hover:bg-white/10"
+            className="rounded-xl p-2 transition hover:bg-white/10"
           >
             <X className="text-white" />
           </button>
 
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
 
           {/* Title */}
-
           <input
             type="text"
             placeholder="Project Title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#1b1b1b] p-3 text-white outline-none focus:border-purple-500"
+            onChange={(e) =>
+              setTitle(e.target.value)
+            }
+            className="w-full rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 text-white outline-none transition focus:border-purple-500"
           />
 
           {/* Category */}
-
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#1b1b1b] p-3 text-white outline-none focus:border-purple-500"
+            onChange={(e) =>
+              setCategory(e.target.value)
+            }
+            className="w-full rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 text-white outline-none transition focus:border-purple-500"
           >
-            <option value="">Select Category</option>
+            <option value="">
+              Select Category
+            </option>
 
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
+              <option
+                key={cat.id}
+                value={cat.name}
+              >
                 {cat.name}
               </option>
             ))}
           </select>
 
           {/* Description */}
-
           <textarea
             rows={5}
-            placeholder="Description"
+            placeholder="Project Description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#1b1b1b] p-3 text-white outline-none focus:border-purple-500 resize-none"
+            onChange={(e) =>
+              setDescription(e.target.value)
+            }
+            className="w-full resize-none rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 text-white outline-none transition focus:border-purple-500"
           />
 
-          {/* Image Upload */}
-
+          {/* Image */}
           <div>
 
             <label className="mb-2 flex items-center gap-2 text-sm text-gray-300">
@@ -171,21 +201,20 @@ function AddProjectModal({
               type="file"
               accept=".jpg,.jpeg,.png,.webp"
               onChange={handleImage}
-              className="w-full rounded-xl border border-white/10 bg-[#1b1b1b] p-3 text-white"
+              className="w-full rounded-2xl border border-white/10 bg-[#1a1a1a] p-3 text-white"
             />
 
             {image && (
               <img
                 src={image}
                 alt=""
-                className="mt-3 h-40 w-full rounded-xl object-cover"
+                className="mt-4 h-48 w-full rounded-2xl object-cover"
               />
             )}
 
           </div>
 
-          {/* PDF Upload */}
-
+          {/* PDF */}
           <div>
 
             <label className="mb-2 flex items-center gap-2 text-sm text-gray-300">
@@ -197,12 +226,12 @@ function AddProjectModal({
               type="file"
               accept=".pdf"
               onChange={handlePdf}
-              className="w-full rounded-xl border border-white/10 bg-[#1b1b1b] p-3 text-white"
+              className="w-full rounded-2xl border border-white/10 bg-[#1a1a1a] p-3 text-white"
             />
 
             {pdf && (
-              <p className="mt-2 text-green-400">
-                PDF Selected ✓
+              <p className="mt-3 text-green-400">
+                ✅ PDF Selected
               </p>
             )}
 
@@ -210,18 +239,19 @@ function AddProjectModal({
 
         </div>
 
-        <div className="mt-6 flex justify-end gap-3">
+        {/* Footer */}
+        <div className="mt-8 flex justify-end gap-3">
 
           <button
             onClick={handleClose}
-            className="rounded-xl border border-white/10 px-5 py-3 text-white hover:bg-white/10"
+            className="rounded-2xl border border-white/10 px-6 py-3 text-white transition hover:bg-white/10"
           >
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
-            className="rounded-xl bg-purple-600 px-5 py-3 text-white hover:bg-purple-700"
+            className="rounded-2xl bg-purple-600 px-6 py-3 font-medium text-white transition hover:bg-purple-700"
           >
             {editProject ? "Update Project" : "Save Project"}
           </button>
@@ -229,6 +259,7 @@ function AddProjectModal({
         </div>
 
       </div>
+
     </div>
   );
 }
