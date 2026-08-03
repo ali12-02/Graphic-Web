@@ -1,3 +1,4 @@
+import FeaturedMessages from "../common/FeaturedMessages";
 // AboutSection.jsx
 import { motion } from "framer-motion";
 import aboutImage from "../../assets/images/about-workspace.jpg";

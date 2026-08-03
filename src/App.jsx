@@ -21,7 +21,7 @@ import Login from "./admin/pages/Login";
 import Dashboard from "./admin/pages/Dashboard";
 import ProjectsAdmin from "./admin/pages/Projects";
 import Categories from "./admin/pages/Categories";
-import Gallery from "./admin/pages/Gallery";
+import Messages from "./admin/pages/Messages";
 
 // Admin Layout
 import ProtectedRoute from "./admin/layout/ProtectedRoute";
@@ -104,12 +104,12 @@ function App() {
           }
         />
 
-        {/* Gallery */}
+        {/* Messages */}
         <Route
-          path="/dashboard/gallery"
+          path="/dashboard/messages"
           element={
             <ProtectedRoute>
-              <Gallery />
+              <Messages />
             </ProtectedRoute>
           }
         />

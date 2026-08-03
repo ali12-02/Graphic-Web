@@ -14,19 +14,14 @@ function QuickActions() {
           onClick={() => navigate("/dashboard/projects")}
           className="w-full rounded-xl bg-purple-600 py-3 text-white transition hover:bg-purple-700"
         >
-          Add Project
+          Manage Projects
         </button>
 
         <button
+          onClick={() => navigate("/dashboard/categories")}
           className="w-full rounded-xl bg-blue-600 py-3 text-white transition hover:bg-blue-700"
         >
-          Upload Image
-        </button>
-
-        <button
-          className="w-full rounded-xl bg-green-600 py-3 text-white transition hover:bg-green-700"
-        >
-          Add Service
+          Manage Categories
         </button>
       </div>
     </div>

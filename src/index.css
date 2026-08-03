@@ -192,3 +192,25 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9333ea;
 }
+/* =========================
+   Featured Messages Marquee
+========================= */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-\[marquee_30s_linear_infinite\] {
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-\[marquee_30s_linear_infinite\]:hover {
+  animation-play-state: paused;
+}

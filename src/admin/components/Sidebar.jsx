@@ -3,8 +3,6 @@ import {
   LayoutDashboard,
   FolderKanban,
   FolderTree,
-  Image,
-  Briefcase,
   MessageSquare,
   Settings,
   LogOut,
@@ -38,16 +36,6 @@ function Sidebar() {
       path: "/dashboard/categories",
     },
     {
-      name: "Gallery",
-      icon: Image,
-      path: "/dashboard/gallery",
-    },
-    {
-      name: "Services",
-      icon: Briefcase,
-      path: "/dashboard/services",
-    },
-    {
       name: "Messages",
       icon: MessageSquare,
       path: "/dashboard/messages",
@@ -61,7 +49,6 @@ function Sidebar() {
 
   return (
     <aside className="w-72 h-screen bg-[#0A0A0A] border-r border-white/10 flex flex-col">
-
       {/* Logo */}
       <div className="p-8 border-b border-white/10">
         <h1 className="text-2xl font-bold text-white">
@@ -93,7 +80,7 @@ function Sidebar() {
                   }`}
                 >
                   {isActive && (
-                    <span className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-white"></span>
+                    <span className="absolute top-2 bottom-2 left-0 w-1 rounded-r-full bg-white"></span>
                   )}
 
                   <Icon
@@ -129,7 +116,6 @@ function Sidebar() {
           </span>
         </button>
       </div>
-
     </aside>
   );
 }
