@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "./DashboardLayout";
-import AddProjectModal from "./AddProjectModal";
-import ProjectTable from "./ProjectTable";
 import { Plus, Search } from "lucide-react";
+
+import DashboardLayout from "../layout/DashboardLayout";
+
+import AddProjectModal from "../components/AddProjectModal";
+import ProjectTable from "../components/ProjectTable";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
@@ -21,7 +23,10 @@ function Projects() {
   useEffect(() => {
     loadProjects();
 
-    window.addEventListener("projectsUpdated", loadProjects);
+    window.addEventListener(
+      "projectsUpdated",
+      loadProjects
+    );
 
     return () => {
       window.removeEventListener(
@@ -71,7 +76,7 @@ function Projects() {
       JSON.stringify(updatedProjects)
     );
 
-    // Dashboard & RecentProjects update
+    // Dashboard update
     window.dispatchEvent(
       new Event("projectsUpdated")
     );
@@ -125,7 +130,6 @@ function Projects() {
     <DashboardLayout>
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
-
         <div>
           <h1 className="text-4xl font-bold text-white">
             Projects
@@ -146,12 +150,10 @@ function Projects() {
           <Plus size={18} />
           New Project
         </button>
-
       </div>
 
       {/* Search */}
       <div className="mb-6 flex items-center rounded-2xl border border-white/10 bg-[#111] px-4 py-3">
-
         <Search
           size={18}
           className="text-gray-500"
@@ -166,7 +168,6 @@ function Projects() {
           }
           className="ml-3 w-full bg-transparent text-white placeholder:text-gray-500 outline-none"
         />
-
       </div>
 
       {/* Table */}

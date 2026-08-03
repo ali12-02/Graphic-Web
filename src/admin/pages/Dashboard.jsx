@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
-import DashboardLayout from "./DashboardLayout";
-import StatCard from "./StatCard";
-import RecentProjects from "./RecentProjects";
-import QuickActions from "./QuickActions";
+import DashboardLayout from "../layout/DashboardLayout";
+
+import StatCard from "../components/StatCard";
+import RecentProjects from "../components/RecentProjects";
+import QuickActions from "../components/QuickActions";
 
 function Dashboard() {
   const [projects, setProjects] = useState([]);
@@ -19,8 +20,11 @@ function Dashboard() {
   useEffect(() => {
     loadProjects();
 
-    // Jab Add / Edit / Delete ho to Dashboard update ho
-    window.addEventListener("projectsUpdated", loadProjects);
+    // Listen for updates
+    window.addEventListener(
+      "projectsUpdated",
+      loadProjects
+    );
 
     return () => {
       window.removeEventListener(
@@ -67,7 +71,6 @@ function Dashboard() {
 
       {/* Statistics */}
       <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-
         <StatCard
           title="Projects"
           value={totalProjects}
@@ -87,12 +90,10 @@ function Dashboard() {
           title="Featured"
           value={featuredProjects}
         />
-
       </div>
 
       {/* Bottom Section */}
       <div className="grid gap-8 xl:grid-cols-3">
-
         <div className="xl:col-span-2">
           <RecentProjects />
         </div>
@@ -100,9 +101,7 @@ function Dashboard() {
         <div>
           <QuickActions />
         </div>
-
       </div>
-
     </DashboardLayout>
   );
 }

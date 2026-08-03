@@ -1,6 +1,6 @@
 // AboutSection.jsx
 import { motion } from "framer-motion";
-import aboutImage from "../assets/images/about-workspace.jpg";
+import aboutImage from "../../assets/images/about-workspace.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 50 },

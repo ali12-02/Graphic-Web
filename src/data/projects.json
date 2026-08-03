@@ -1,22 +1,33 @@
 [
   {
     "id": 1,
-    "title": "Project 1",
-    "category": "Branding",
-    "description": "Modern branding identity",
+    "title": "EcoTrack Dashboard",
+    "category": "Web Application",
+    "description": "A comprehensive environmental monitoring dashboard that tracks carbon footprint, energy consumption, and sustainability metrics.",
     "image": "/projects/project1.jpg",
-    "status": "Published",
-    "featured": true,
-    "createdAt": "2026-08-02"
+    "pdf": "/pdfs/project1.pdf",
+    "status": "Published"
   },
   {
     "id": 2,
-    "title": "Project 2",
-    "category": "UI/UX",
-    "description": "Premium UI Design",
+    "title": "Neural Design System",
+    "category": "UI/UX Framework",
+    "description": "A modern, AI-powered design system with adaptive components and intelligent theming.",
     "image": "/projects/project2.jpg",
-    "status": "Draft",
-    "featured": false,
-    "createdAt": "2026-08-01"
-  }
+    "pdf": "/pdfs/project2.pdf",
+    "status": "Published"
+  },
+  {
+    "id": 3,
+    "title": "test",
+    "category": "testcate",
+    "description": "description",
+   "image": "/projects/project2.jpg",
+    "pdf": "/pdfs/project2.pdf",
+    "status": "Published"
+  } 
 ]
+
+
+
+

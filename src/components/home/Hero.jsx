@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import heroBg from "../assets/images/hero.jpg";
+import heroBg from "../../assets/images/hero.jpg";
 
 function Hero() {
   return (
@@ -86,3 +86,4 @@ function Hero() {
 }
 
 export default Hero;
+

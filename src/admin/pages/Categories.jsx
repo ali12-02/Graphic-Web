@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "./DashboardLayout";
 import { Plus, Search, Pencil, Trash2, X } from "lucide-react";
+
+import DashboardLayout from "../layout/DashboardLayout";
 
 function Categories() {
   const [categories, setCategories] = useState([]);

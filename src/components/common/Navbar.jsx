@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import logo from "../assets/images/White Color WOBG-02.png";
+import logo from "../../assets/images/White Color WOBG-02.png";
 import { FaArrowRight } from "react-icons/fa6";
 import { ShieldUser } from "lucide-react";
 

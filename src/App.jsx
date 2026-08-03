@@ -1,26 +1,30 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import MouseReveal from "./components/MouseReveal";
+// Common Components
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
+import MouseReveal from "./components/common/MouseReveal";
 
-import Hero from "./sections/Hero";
-import Projects from "./sections/Projects";
+// Home Components
+import Hero from "./components/home/Hero";
+import AboutSection from "./components/home/AboutSection";
+import { ProjectsList, ProjectPreview } from "./components/home/AllProjects";
 
+// Pages
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Work from "./pages/Work";
 import Contact from "./pages/Contact";
-import ProjectPreview from "./pages/ProjectPreview";
 
-import Login from "./admin/Login";
-import Dashboard from "./admin/Dashboard";
-import ProjectsAdmin from "./admin/Projects";
-import Categories from "./admin/Categories";
-import Gallery from "./admin/Gallery";
-import ProtectedRoute from "./admin/ProtectedRoute";
-import AboutSection from "./sections/AboutSection";
+// Admin Pages
+import Login from "./admin/pages/Login";
+import Dashboard from "./admin/pages/Dashboard";
+import ProjectsAdmin from "./admin/pages/Projects";
+import Categories from "./admin/pages/Categories";
+import Gallery from "./admin/pages/Gallery";
 
+// Admin Layout
+import ProtectedRoute from "./admin/layout/ProtectedRoute";
 
 function App() {
   const location = useLocation();
@@ -45,10 +49,10 @@ function App() {
           path="/"
           element={
             <>
-  <Hero />
-  <AboutSection />
-  <Projects />
-</>
+              <Hero />
+              <AboutSection />
+              <ProjectsList />
+            </>
           }
         />
 

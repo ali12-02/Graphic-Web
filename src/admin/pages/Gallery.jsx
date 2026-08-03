@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "./DashboardLayout";
-import GalleryTable from "./GalleryTable";
-import AddGalleryModal from "./AddGalleryModal";
 import { Plus, Search } from "lucide-react";
+
+import DashboardLayout from "../layout/DashboardLayout";
+
+import GalleryTable from "../components/GalleryTable";
+import AddGalleryModal from "../components/AddGalleryModal";
 
 function Gallery() {
   const [gallery, setGallery] = useState([]);
