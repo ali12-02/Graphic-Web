@@ -6,6 +6,7 @@ import {
   MessageSquare,
   Settings,
   LogOut,
+  Plus, // ✅ Naya icon import
 } from "lucide-react";
 
 function Sidebar() {
@@ -29,6 +30,12 @@ function Sidebar() {
       name: "Projects",
       icon: FolderKanban,
       path: "/dashboard/projects",
+    },
+    // ✅ Naya menu item - Add Project
+    {
+      name: "Add Project",
+      icon: Plus,
+      path: "/dashboard/add-project",
     },
     {
       name: "Categories",
@@ -93,6 +100,13 @@ function Sidebar() {
                   />
 
                   <span>{item.name}</span>
+
+                  {/* ✅ "Add Project" ke liye badge (optional) */}
+                  {item.name === "Add Project" && (
+                    <span className="ml-auto text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full">
+                      New
+                    </span>
+                  )}
                 </div>
               )}
             </NavLink>

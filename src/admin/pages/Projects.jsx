@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 import DashboardLayout from "../layout/DashboardLayout";
 
@@ -140,16 +140,7 @@ function Projects() {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingProject(null);
-            setIsModalOpen(true);
-          }}
-          className="flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-white transition hover:bg-purple-700"
-        >
-          <Plus size={18} />
-          New Project
-        </button>
+        {/* 👈 "New Project" Button REMOVED FROM HERE */}
       </div>
 
       {/* Search */}

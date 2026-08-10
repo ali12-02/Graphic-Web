@@ -20,6 +20,7 @@ import Contact from "./pages/Contact";
 import Login from "./admin/pages/Login";
 import Dashboard from "./admin/pages/Dashboard";
 import ProjectsAdmin from "./admin/pages/Projects";
+import AddProject from "./admin/pages/AddProject";
 import Categories from "./admin/pages/Categories";
 import Messages from "./admin/pages/Messages";
 
@@ -90,6 +91,16 @@ function App() {
           element={
             <ProtectedRoute>
               <ProjectsAdmin />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ FIXED: Add Project Route (URL ab exactly match karega) */}
+        <Route
+          path="/dashboard/add-project"
+          element={
+            <ProtectedRoute>
+              <AddProject />
             </ProtectedRoute>
           }
         />
