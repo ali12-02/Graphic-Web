@@ -116,7 +116,17 @@ function Login() {
           </button>
         </form>
 
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+        {/* 🟢 NEW: Bypass Link for Testing */}
+        <div className="mt-8 border-t border-white/10 pt-6 text-center">
+          <Link
+            to="/dashboard"
+            className="text-xs text-gray-500 hover:text-purple-400 transition-colors underline decoration-transparent hover:decoration-purple-400 underline-offset-2"
+          >
+            [ Test Mode: Skip Login → ]
+          </Link>
+        </div>
+
+        <div className="mt-4 text-center text-sm text-gray-500">
           © 2026 Graphic Web CMS
         </div>
       </motion.div>

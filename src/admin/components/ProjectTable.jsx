@@ -1,6 +1,7 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Star, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 
-function ProjectTable({ projects, onDelete, onEdit }) {
+function ProjectTable({ projects, onDelete, onEdit, onToggleFeatured }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#111]">
       <table className="w-full">
@@ -9,15 +10,15 @@ function ProjectTable({ projects, onDelete, onEdit }) {
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
               Project
             </th>
-
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
               Category
             </th>
-
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
               Status
             </th>
-
+            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
+              Featured
+            </th>
             <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">
               Actions
             </th>
@@ -27,10 +28,7 @@ function ProjectTable({ projects, onDelete, onEdit }) {
         <tbody>
           {projects.length === 0 ? (
             <tr>
-              <td
-                colSpan="4"
-                className="px-6 py-16 text-center text-gray-500"
-              >
+              <td colSpan="5" className="px-6 py-16 text-center text-gray-500">
                 No projects added yet.
               </td>
             </tr>
@@ -43,11 +41,9 @@ function ProjectTable({ projects, onDelete, onEdit }) {
                 <td className="px-6 py-5 font-medium text-white">
                   {project.title}
                 </td>
-
                 <td className="px-6 py-5 text-gray-300">
                   {project.category}
                 </td>
-
                 <td className="px-6 py-5">
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -59,9 +55,35 @@ function ProjectTable({ projects, onDelete, onEdit }) {
                     {project.status}
                   </span>
                 </td>
+                
+                {/* Featured Column */}
+                <td className="px-6 py-5">
+                  <button
+                    onClick={() => onToggleFeatured(project.id)}
+                    className={`rounded-xl p-2 transition-all duration-300 hover:scale-110 active:scale-95 ${
+                      project.featured 
+                        ? "text-yellow-400 hover:bg-yellow-500/10" 
+                        : "text-gray-500 hover:bg-white/5"
+                    }`}
+                    title={project.featured ? "Unmark Featured" : "Mark as Featured"}
+                  >
+                    <Star size={18} className={project.featured ? "fill-yellow-400" : ""} />
+                  </button>
+                </td>
 
                 <td className="px-6 py-5">
                   <div className="flex justify-end gap-3">
+                    
+                    {/* 🟢 NEW: View Live Project (Eye Icon) */}
+                    <Link
+                      to={`/project/${project.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-xl p-2 text-green-400 transition-all duration-300 hover:bg-green-500/10 hover:scale-110 active:scale-95"
+                      title="View Live Project"
+                    >
+                      <Eye size={18} />
+                    </Link>
 
                     {/* Edit */}
                     <button
@@ -80,7 +102,6 @@ function ProjectTable({ projects, onDelete, onEdit }) {
                     >
                       <Trash2 size={18} />
                     </button>
-
                   </div>
                 </td>
               </tr>

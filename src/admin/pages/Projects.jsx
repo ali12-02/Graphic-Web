@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react"; // ✅ Plus Icon Added
 
 import DashboardLayout from "../layout/DashboardLayout";
 
@@ -54,7 +54,7 @@ function Projects() {
       updatedProjects = [
         ...projects,
         {
-          id: Date.now(),
+          id: Date.now().toString(),
           title: project.title,
           category: project.category,
           description: project.description,
@@ -83,6 +83,19 @@ function Projects() {
 
     setEditingProject(null);
     setIsModalOpen(false);
+  };
+
+  // Toggle Featured
+  const handleToggleFeatured = (id) => {
+    const updatedProjects = projects.map((project) =>
+      project.id === id
+        ? { ...project, featured: !project.featured }
+        : project
+    );
+
+    setProjects(updatedProjects);
+    localStorage.setItem("projects", JSON.stringify(updatedProjects));
+    window.dispatchEvent(new Event("projectsUpdated"));
   };
 
   // Delete
@@ -128,7 +141,7 @@ function Projects() {
 
   return (
     <DashboardLayout>
-      {/* Header */}
+      {/* 🟢 Header with Button */}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold text-white">
@@ -139,8 +152,17 @@ function Projects() {
             Manage your portfolio projects
           </p>
         </div>
-
-        {/* 👈 "New Project" Button REMOVED FROM HERE */}
+        
+        {/* 🟢 NEW: Add Project Button */}
+        <button
+          onClick={() => {
+            setEditingProject(null);
+            setIsModalOpen(true);
+          }}
+          className="flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-white transition hover:bg-purple-700 shadow-lg shadow-purple-900/30"
+        >
+          <Plus size={18} /> New Project
+        </button>
       </div>
 
       {/* Search */}
@@ -166,6 +188,7 @@ function Projects() {
         projects={filteredProjects}
         onDelete={handleDelete}
         onEdit={handleEdit}
+        onToggleFeatured={handleToggleFeatured}
       />
 
       {/* Modal */}

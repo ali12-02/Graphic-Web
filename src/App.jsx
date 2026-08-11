@@ -1,4 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion"; // ✅ Imported
+import { useEffect, useState } from "react";
 
 // Common Components
 import Navbar from "./components/common/Navbar";
@@ -8,13 +10,14 @@ import MouseReveal from "./components/common/MouseReveal";
 // Home Components
 import Hero from "./components/home/Hero";
 import AboutSection from "./components/home/AboutSection";
-import { ProjectsList, ProjectPreview } from "./components/home/AllProjects";
+import { ProjectsList } from "./components/home/AllProjects";
 
 // Pages
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Work from "./pages/Work";
 import Contact from "./pages/Contact";
+import ProjectPreview from "./pages/ProjectPreview";
 
 // Admin Pages
 import Login from "./admin/pages/Login";
@@ -22,13 +25,42 @@ import Dashboard from "./admin/pages/Dashboard";
 import ProjectsAdmin from "./admin/pages/Projects";
 import AddProject from "./admin/pages/AddProject";
 import Categories from "./admin/pages/Categories";
-import Messages from "./admin/pages/Messages";
+import Offers from "./admin/pages/Offers";
+import Stats from "./admin/pages/Stats";
+import ThemeSettings from "./admin/pages/ThemeSettings";
+import ContentManager from "./admin/pages/ContentManager";
+import ButtonManager from "./admin/pages/ButtonManager"; // ✅ IMPORT ADDED
 
 // Admin Layout
 import ProtectedRoute from "./admin/layout/ProtectedRoute";
 
 function App() {
   const location = useLocation();
+  const [theme, setTheme] = useState({ webBg: "#050505", webText: "#ffffff", webAccent: "#a855f7" });
+
+  // 🟢 Load Theme Config for Website
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("themeConfig"));
+    if (saved) {
+      setTheme({
+        webBg: saved.webBg || "#050505",
+        webText: saved.webText || "#ffffff",
+        webAccent: saved.webAccent || "#a855f7",
+      });
+    }
+
+    const handleGlobalUpdate = () => {
+      const updated = JSON.parse(localStorage.getItem("themeConfig"));
+      if (updated) setTheme({
+        webBg: updated.webBg || "#050505",
+        webText: updated.webText || "#ffffff",
+        webAccent: updated.webAccent || "#a855f7",
+      });
+    };
+
+    window.addEventListener("globalThemeUpdated", handleGlobalUpdate);
+    return () => window.removeEventListener("globalThemeUpdated", handleGlobalUpdate);
+  }, []);
 
   const isAdminPage =
     location.pathname === "/admin" ||
@@ -40,94 +72,137 @@ function App() {
   const hideLayout = isAdminPage || isProjectPreview;
 
   return (
-    <>
+    <div style={{ backgroundColor: theme.webBg, color: theme.webText }}>
       {!hideLayout && <MouseReveal />}
       {!hideLayout && <Navbar />}
 
-      <Routes>
-        {/* Home */}
-        <Route
-          path="/"
-          element={
-            <>
-              <Hero />
-              <AboutSection />
-              <ProjectsList />
-            </>
-          }
-        />
+      {/* 🟢 AnimatePresence enables smooth enter/exit animations */}
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* Home */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <AboutSection />
+                <ProjectsList />
+              </>
+            }
+          />
 
-        {/* Portfolio Pages */}
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/work" element={<Work />} />
-        <Route path="/contact" element={<Contact />} />
+          {/* Portfolio Pages */}
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/work" element={<Work />} />
+          <Route path="/contact" element={<Contact />} />
 
-        {/* Project Preview */}
-        <Route
-          path="/project/:id"
-          element={<ProjectPreview />}
-        />
+          {/* Project Preview Route */}
+          <Route
+            path="/project/:id"
+            element={<ProjectPreview />}
+          />
 
-        {/* Admin Login */}
-        <Route
-          path="/admin"
-          element={<Login />}
-        />
+          {/* Admin Login */}
+          <Route
+            path="/admin"
+            element={<Login />}
+          />
 
-        {/* Dashboard */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+          {/* Dashboard */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Projects */}
-        <Route
-          path="/dashboard/projects"
-          element={
-            <ProtectedRoute>
-              <ProjectsAdmin />
-            </ProtectedRoute>
-          }
-        />
+          {/* Projects */}
+          <Route
+            path="/dashboard/projects"
+            element={
+              <ProtectedRoute>
+                <ProjectsAdmin />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* ✅ FIXED: Add Project Route (URL ab exactly match karega) */}
-        <Route
-          path="/dashboard/add-project"
-          element={
-            <ProtectedRoute>
-              <AddProject />
-            </ProtectedRoute>
-          }
-        />
+          {/* Add Project */}
+          <Route
+            path="/dashboard/add-project"
+            element={
+              <ProtectedRoute>
+                <AddProject />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Categories */}
-        <Route
-          path="/dashboard/categories"
-          element={
-            <ProtectedRoute>
-              <Categories />
-            </ProtectedRoute>
-          }
-        />
+          {/* Offers Route */}
+          <Route
+            path="/dashboard/offers"
+            element={
+              <ProtectedRoute>
+                <Offers />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Messages */}
-        <Route
-          path="/dashboard/messages"
-          element={
-            <ProtectedRoute>
-              <Messages />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+          {/* Stats Route */}
+          <Route
+            path="/dashboard/stats"
+            element={
+              <ProtectedRoute>
+                <Stats />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ThemeSettings Route */}
+          <Route
+            path="/dashboard/theme-settings"
+            element={
+              <ProtectedRoute>
+                <ThemeSettings />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Content Manager Route */}
+          <Route
+            path="/dashboard/content-manager"
+            element={
+              <ProtectedRoute>
+                <ContentManager />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ✅ NEW: Button Manager Route */}
+          <Route
+            path="/dashboard/button-manager"
+            element={
+              <ProtectedRoute>
+                <ButtonManager />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Categories */}
+          <Route
+            path="/dashboard/categories"
+            element={
+              <ProtectedRoute>
+                <Categories />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AnimatePresence>
 
       {!hideLayout && <Footer />}
-    </>
+    </div>
   );
 }
 
