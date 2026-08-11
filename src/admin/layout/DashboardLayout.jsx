@@ -12,7 +12,7 @@ function DashboardLayout({ children }) {
     webAccent: "#a855f7",
   });
 
-  // 🟢 NEW: State for Search
+  // 🟢 State for Search
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function DashboardLayout({ children }) {
         style={{ backgroundColor: theme.webAccent }}
       ></div>
 
-      {/* 🟢 UPDATE: Search term pass kar rahe hain Sidebar ko */}
+      {/* Update: Search term pass kar rahe hain Sidebar ko */}
       <Sidebar searchTerm={searchTerm} />
       
       <div className="flex flex-1 flex-col overflow-hidden relative z-10">
@@ -77,7 +77,7 @@ function DashboardLayout({ children }) {
           {/* Topbar Glass Overlay for premium depth */}
           <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
           
-          {/* 🟢 UPDATE: onSearch function pass kar rahe hain Topbar ko */}
+          {/* Update: onSearch function pass kar rahe hain Topbar ko */}
           <Topbar onSearch={setSearchTerm} />
         </div>
 

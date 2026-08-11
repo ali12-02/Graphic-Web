@@ -27,9 +27,9 @@ import ProjectsAdmin from "./admin/pages/Projects";
 import AddProject from "./admin/pages/AddProject";
 import Categories from "./admin/pages/Categories";
 import Offers from "./admin/pages/Offers";
-// 🟢 REMOVED: Stats and ButtonManager imports (Ab Brain manage karega)
 import ThemeSettings from "./admin/pages/ThemeSettings";
 import ContentManager from "./admin/pages/ContentManager";
+import Settings from "./admin/pages/Settings";
 
 // Admin Layout
 import ProtectedRoute from "./admin/layout/ProtectedRoute";
@@ -37,8 +37,11 @@ import ProtectedRoute from "./admin/layout/ProtectedRoute";
 function App() {
   const location = useLocation();
   const [theme, setTheme] = useState({ webBg: "#050505", webText: "#ffffff", webAccent: "#a855f7" });
+  
+  // 🟢 NEW: Portal Mode State
+  const [portalMode, setPortalMode] = useState("portfolio");
 
-  // 🟢 Load Theme Config for Website
+  // 🟢 Load Theme Config & Portal Mode
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("themeConfig"));
     if (saved) {
@@ -58,8 +61,23 @@ function App() {
       });
     };
 
+    // 🟢 Load Portal Mode from Settings
+    const mode = localStorage.getItem("portalMode");
+    if (mode) setPortalMode(mode);
+
+    // 🟢 Listen to Portal Mode Changes
+    const handlePortalChange = () => {
+      const newMode = localStorage.getItem("portalMode");
+      if (newMode) setPortalMode(newMode);
+    };
+
     window.addEventListener("globalThemeUpdated", handleGlobalUpdate);
-    return () => window.removeEventListener("globalThemeUpdated", handleGlobalUpdate);
+    window.addEventListener("portalModeChanged", handlePortalChange);
+
+    return () => {
+      window.removeEventListener("globalThemeUpdated", handleGlobalUpdate);
+      window.removeEventListener("portalModeChanged", handlePortalChange);
+    };
   }, []);
 
   const isAdminPage =
@@ -74,7 +92,7 @@ function App() {
   return (
     <div style={{ backgroundColor: theme.webBg, color: theme.webText }}>
       {!hideLayout && <MouseReveal />}
-      {!hideLayout && <Navbar />}
+      {!hideLayout && <Navbar portalMode={portalMode} />} {/* 🟢 Pass portalMode to Navbar */}
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
@@ -151,8 +169,6 @@ function App() {
             }
           />
 
-          {/* 🟢 REMOVED: Stats Route (Now managed by ContentManager Brain) */}
-
           {/* ThemeSettings Route */}
           <Route
             path="/dashboard/theme-settings"
@@ -173,7 +189,15 @@ function App() {
             }
           />
 
-          {/* 🟢 REMOVED: Button Manager Route (Now managed by ContentManager Brain) */}
+          {/* Settings Route */}
+          <Route
+            path="/dashboard/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Categories */}
           <Route

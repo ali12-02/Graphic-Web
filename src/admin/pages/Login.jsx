@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../utils/auth";
+// 🟢 REMOVED: import { login } from "../utils/auth"; (Ab hum localStorage use karenge)
 import { motion } from "framer-motion";
 import {
   FiUser,
@@ -19,20 +19,30 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  // 🟢 NEW: Custom Login Logic using localStorage authData
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (login(username, password)) {
+    // Get saved credentials from Settings
+    const savedAuth = JSON.parse(localStorage.getItem("authData"));
+
+    // Default fallback if no authData exists yet
+    const defaultUsername = savedAuth?.username || "admin";
+    const defaultPassword = savedAuth?.password || "admin";
+
+    // Check credentials
+    if (username === defaultUsername && password === defaultPassword) {
+      localStorage.setItem("admin", "true");
+      localStorage.setItem("token", "valid_token_123");
       navigate("/dashboard");
     } else {
       setError("Invalid Username or Password");
     }
   };
 
-  // 🟢 FIXED BYPASS FUNCTION
+  // 🟢 Bypass function (Same as before)
   const handleBypass = (e) => {
     e.preventDefault();
-    // Create a dummy login session so ProtectedRoute allows access
     localStorage.setItem("admin", "true");
     localStorage.setItem("token", "bypass_token_123");
     navigate("/dashboard");
@@ -125,7 +135,7 @@ function Login() {
           </button>
         </form>
 
-        {/* 🟢 WORKING BYPASS LINK FOR TESTING */}
+        {/* Bypass Link */}
         <div className="mt-8 border-t border-white/10 pt-6 text-center">
           <button
             onClick={handleBypass}

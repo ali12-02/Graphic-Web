@@ -12,10 +12,13 @@ function Topbar({ onSearch }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null); // To detect clicks outside
 
+  // 🟢 THEME STATE (Live Site Button Colors Added)
   const [theme, setTheme] = useState({ 
     adminCardBg: "#111111", 
     adminBorder: "#ffffff10",
-    webAccent: "#a855f7" 
+    webAccent: "#a855f7",
+    liveSiteBtnBg: "#16a34a",   // 🟢 Default Green
+    liveSiteBtnText: "#ffffff"  // 🟢 Default White
   });
 
   useEffect(() => {
@@ -25,6 +28,8 @@ function Topbar({ onSearch }) {
         adminCardBg: saved.adminCardBg || "#111111",
         adminBorder: saved.adminBorder || "#ffffff10",
         webAccent: saved.webAccent || "#a855f7",
+        liveSiteBtnBg: saved.liveSiteBtnBg || "#16a34a",
+        liveSiteBtnText: saved.liveSiteBtnText || "#ffffff"
       });
     }
 
@@ -35,6 +40,8 @@ function Topbar({ onSearch }) {
           adminCardBg: updated.adminCardBg || "#111111",
           adminBorder: updated.adminBorder || "#ffffff10",
           webAccent: updated.webAccent || "#a855f7",
+          liveSiteBtnBg: updated.liveSiteBtnBg || "#16a34a",
+          liveSiteBtnText: updated.liveSiteBtnText || "#ffffff"
         });
       }
     };
@@ -95,6 +102,7 @@ function Topbar({ onSearch }) {
   const handleSearchChange = (e) => {
     const val = e.target.value;
     setSearchValue(val);
+    // 🟢 FIX: Parent component ko search value bhejna
     if (onSearch) {
       onSearch(val);
     }
@@ -119,8 +127,17 @@ function Topbar({ onSearch }) {
       <div />
       <div className="flex items-center gap-4">
         
-        <button onClick={() => navigate('/')} className="group relative flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-2.5 text-green-400 transition-all duration-300 hover:bg-green-500 hover:text-white hover:border-green-400 hover:shadow-[0_0_25px_rgba(34,197,94,0.25)] active:scale-95 overflow-hidden">
-          <div className="absolute inset-0 bg-green-400/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        {/* 🟢 UPDATED: Visit Live Site Button (Now uses Theme Colors) */}
+        <button 
+          onClick={() => navigate('/')} 
+          className="group relative flex items-center gap-2 rounded-xl border px-5 py-2.5 transition-all duration-300 active:scale-95 overflow-hidden"
+          style={{ 
+            backgroundColor: theme.liveSiteBtnBg,
+            color: theme.liveSiteBtnText,
+            borderColor: `${theme.liveSiteBtnBg}60`
+          }}
+        >
+          <div className="absolute inset-0 bg-white/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <Globe size={18} className="relative z-10 transition-transform group-hover:rotate-12 group-hover:scale-110" />
           <span className="relative z-10 text-sm font-medium hidden sm:block">Visit Live Site</span>
         </button>
@@ -128,7 +145,15 @@ function Topbar({ onSearch }) {
         {/* Search Bar */}
         <div className={`relative flex w-72 items-center rounded-xl border px-4 py-2.5 transition-all duration-300 ease-in-out shadow-sm ${isFocused ? "w-80 shadow-[0_0_35px_-8px] scale-[1.02]" : ""}`} style={{ borderColor: isFocused ? theme.webAccent : theme.adminBorder, backgroundColor: isFocused ? `${theme.adminCardBg}` : `${theme.adminCardBg}dd`, boxShadow: isFocused ? `0 0 35px -5px ${theme.webAccent}60` : "0 2px 10px rgba(0,0,0,0.2)" }}>
           <Search size={18} className={`transition-all duration-300 ${isFocused ? "text-purple-400 scale-110" : "text-gray-500"}`} />
-          <input type="text" placeholder="Search menu items..." value={searchValue} onChange={handleSearchChange} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} className="ml-3 w-full bg-transparent text-white placeholder:text-gray-500 outline-none text-sm" />
+          <input 
+            type="text" 
+            placeholder="Search menu items..." 
+            value={searchValue} 
+            onChange={handleSearchChange} 
+            onFocus={() => setIsFocused(true)} 
+            onBlur={() => setIsFocused(false)} 
+            className="ml-3 w-full bg-transparent text-white placeholder:text-gray-500 outline-none text-sm" 
+          />
           <span className={`text-[10px] border border-white/10 bg-white/5 px-2 py-0.5 rounded ml-auto hidden sm:block transition-all duration-300 ${isFocused ? "opacity-40 scale-95" : "opacity-100"}`}>⌘K</span>
         </div>
 
