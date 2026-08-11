@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Search, Plus } from "lucide-react"; // ✅ Plus Icon Added
+import { Search, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // 🟢 Import useNavigate
 
 import DashboardLayout from "../layout/DashboardLayout";
 
@@ -7,6 +8,7 @@ import AddProjectModal from "../components/AddProjectModal";
 import ProjectTable from "../components/ProjectTable";
 
 function Projects() {
+  const navigate = useNavigate(); // 🟢 Initialize navigate
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -153,12 +155,9 @@ function Projects() {
           </p>
         </div>
         
-        {/* 🟢 NEW: Add Project Button */}
+        {/* 🟢 UPDATED: Add Project Button (Redirects to Add Project Page) */}
         <button
-          onClick={() => {
-            setEditingProject(null);
-            setIsModalOpen(true);
-          }}
+          onClick={() => navigate("/dashboard/add-project")}
           className="flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-white transition hover:bg-purple-700 shadow-lg shadow-purple-900/30"
         >
           <Plus size={18} /> New Project

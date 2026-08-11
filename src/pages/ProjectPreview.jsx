@@ -1,38 +1,57 @@
-import { useMemo, useEffect } from "react";
+import { useState, useEffect } from "react"; // 🟢 Changed useMemo to useState
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Folder, ExternalLink, Sparkles, FileText, Wrench, User, Monitor, PenTool } from "lucide-react";
 
 function ProjectPreview() {
   const { id } = useParams();
+  const [project, setProject] = useState(null); // 🟢 Using state
 
-  const project = useMemo(() => {
+  useEffect(() => {
+    // 🟢 Fetch project from localStorage safely
     const savedProjects = JSON.parse(localStorage.getItem("projects")) || [];
-    return savedProjects.find((item) => String(item.id) === String(id));
+    const found = savedProjects.find((item) => String(item.id) === String(id));
+    setProject(found || null);
   }, [id]);
 
   useEffect(() => {
-    document.title = project ? project.title : "Project";
+    if (project) {
+      document.title = project.title || "Project";
+    } else {
+      document.title = "Project Not Found";
+    }
     window.scrollTo(0, 0);
   }, [project]);
 
   if (!project) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-[#140b22] to-[#050505] text-white">
-        <div className="text-center"><h1 className="text-5xl font-bold">Project Not Found</h1><p className="mt-4 text-gray-400">This project does not exist.</p>
-          <Link to="/" className="mt-8 inline-flex rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_35px_rgba(168,85,247,.5)]">Back to Home</Link>
+        <div className="text-center">
+          <h1 className="text-5xl font-bold">Project Not Found</h1>
+          <p className="mt-4 text-gray-400">This project does not exist.</p>
+          <Link to="/" className="mt-8 inline-flex rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_35px_rgba(168,85,247,.5)]">
+            Back to Home
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <motion.div initial={{ opacity: 0, x: 100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} transition={{ duration: 0.4, ease: "easeInOut" }} className="min-h-screen bg-[#050505] text-white relative">
+    <motion.div 
+      initial={{ opacity: 0, x: 100 }} 
+      animate={{ opacity: 1, x: 0 }} 
+      exit={{ opacity: 0, x: -100 }} // 🟢 Added exit for AnimatePresence compatibility
+      transition={{ duration: 0.4, ease: "easeInOut" }} 
+      className="min-h-screen bg-[#050505] text-white relative"
+    >
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-purple-900/20 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-fuchsia-600/10 blur-[120px] pointer-events-none"></div>
+      
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-20">
-        <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8 lg:mb-12 group">
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /><span className="text-sm font-medium">Back to Portfolio</span>
+        <Link to="/work" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8 lg:mb-12 group">
+          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="text-sm font-medium">Back to Portfolio</span>
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -40,23 +59,37 @@ function ProjectPreview() {
           {/* LEFT SIDE */}
           <div className="lg:col-span-8 space-y-6 lg:space-y-8">
             <div className="space-y-4">
-              <h1 className="text-5xl lg:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-purple-200 to-fuchsia-200 bg-clip-text text-transparent drop-shadow-lg">{project.title}</h1>
+              <h1 className="text-5xl lg:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-purple-200 to-fuchsia-200 bg-clip-text text-transparent drop-shadow-lg">
+                {project.title}
+              </h1>
               <div className="flex flex-wrap items-center gap-4 text-sm">
-                <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm"><Folder size={14} className="text-purple-400" /> {project.category}</span>
-                <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm"><Calendar size={14} className="text-purple-400" /> {new Date(project.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+                  <Folder size={14} className="text-purple-400" /> {project.category}
+                </span>
+                <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+                  <Calendar size={14} className="text-purple-400" /> 
+                  {new Date(project.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 w-fit backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span><span className="text-xs font-medium">{project.status === "Published" ? "Published" : "Draft"}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+              <span className="text-xs font-medium">{project.status === "Published" ? "Published" : "Draft"}</span>
             </div>
 
             {/* COVER IMAGE */}
             <div className="relative group rounded-3xl overflow-hidden bg-[#0f0f0f] border border-white/10 shadow-2xl shadow-purple-900/20">
               <div className="bg-[#1a1a1a] p-4 lg:p-8 flex items-center justify-center min-h-[400px] lg:min-h-[500px] relative">
-                <img src={project.image && project.image !== "" ? project.image : "/projects/fallback.jpg"} alt={project.title} className="w-full h-auto max-h-[70vh] object-contain rounded-2xl transition-transform duration-700 group-hover:scale-105" />
+                <img 
+                  src={project.image && project.image !== "" ? project.image : "/projects/fallback.jpg"} 
+                  alt={project.title} 
+                  className="w-full h-auto max-h-[70vh] object-contain rounded-2xl transition-transform duration-700 group-hover:scale-105" 
+                />
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none"></div>
               </div>
-              <a href={project.image} target="_blank" rel="noopener noreferrer" className="absolute bottom-6 right-6 flex items-center gap-2 px-4 py-2.5 bg-black/70 backdrop-blur-md border border-white/20 rounded-full text-gray-300 hover:bg-black hover:text-white hover:border-purple-400 transition-all z-10"><ExternalLink size={15} /> <span className="text-xs">View Full</span></a>
+              <a href={project.image} target="_blank" rel="noopener noreferrer" className="absolute bottom-6 right-6 flex items-center gap-2 px-4 py-2.5 bg-black/70 backdrop-blur-md border border-white/20 rounded-full text-gray-300 hover:bg-black hover:text-white hover:border-purple-400 transition-all z-10">
+                <ExternalLink size={15} /> <span className="text-xs">View Full</span>
+              </a>
             </div>
 
             {/* GALLERY IMAGES */}
@@ -82,11 +115,13 @@ function ProjectPreview() {
             {/* Description */}
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden group">
               <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-purple-600/10 blur-[50px] group-hover:scale-150 transition duration-500 pointer-events-none"></div>
-              <h3 className="text-xs uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2 relative z-10"><Sparkles size={14} className="text-purple-400" /> About This Project</h3>
+              <h3 className="text-xs uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2 relative z-10">
+                <Sparkles size={14} className="text-purple-400" /> About This Project
+              </h3>
               <p className="text-lg leading-relaxed text-gray-300 font-light relative z-10">{project.description}</p>
             </div>
 
-            {/* 🟢 PDF FIX (Direct new tab, no ImgBB vertical glitch) */}
+            {/* PDF LINK */}
             {project.pdf && (
               <div className="pt-2">
                 <a 

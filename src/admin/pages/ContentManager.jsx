@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Save, FileText, Globe, Layout, Smartphone, Mail, MapPin, Phone, Plus, Trash2 } from "lucide-react";
+import { Save, FileText, Globe, Layout, Smartphone, Mail, MapPin, Phone, Plus, Trash2, Image as ImageIcon, Users, Palette, Gauge, Star } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 
@@ -24,7 +24,7 @@ function ContentManager() {
       { label: "Contact", url: "/contact" },
     ],
     
-    // Work
+    // 🟢 WORK SECTION SIDED (Data retained for future, but UI hidden)
     workTitle: "Our Work",
     workSubtitle: "A showcase of our latest projects.",
     workProjects: [
@@ -61,106 +61,126 @@ function ContentManager() {
       { title: "Explore", links: [{ label: "Work", url: "/work" }, { label: "Services", url: "/services" }] },
       { title: "Company", links: [{ label: "About", url: "/about" }, { label: "Contact", url: "/contact" }] },
     ],
+
+    // Team
+    teamTitle: "Meet The Team",
+    teamSubtitle: "The creative minds behind Kreative Design Studio.",
+    teamMembers: [
+      {
+        name: "Mohsin Azeem",
+        role: "CEO & Creative Director",
+        bio: "Leading the creative vision with over 10 years of experience.",
+        image: "https://ui-avatars.com/api/?name=Mohsin+Azeem&size=200&background=0D0D0D&color=fff",
+        email: "ceo@kreativedesign.com",
+        socialLink: "#"
+      },
+      {
+        name: "Waleed Ali",
+        role: "Managing Director",
+        bio: "Managing operations, driving business growth, and ensuring 100% client satisfaction.",
+        image: "https://ui-avatars.com/api/?name=Waleed+Ali&size=200&background=0D0D0D&color=fff",
+        email: "md@kreativedesign.com",
+        socialLink: "#"
+      }
+    ],
+
+    // 🟢 MERGED: BUTTON MANAGER DATA
+    buttonConfig: {
+      navWorkLabel: "Work", navWorkLink: "/work",
+      navServicesLabel: "Services", navServicesLink: "/services",
+      navAboutLabel: "About", navAboutLink: "/#about-section",
+      navTeamLabel: "Team", navTeamLink: "/team",
+      navContactLabel: "Contact", navContactLink: "/contact",
+      navHireLabel: "Hire Me", navHireLink: "/contact",
+      heroPortfolioLabel: "Portfolio", heroPortfolioLink: "/work",
+      heroAboutLabel: "About", heroAboutLink: "/#about-section",
+      heroFeaturedLabel: "Featured", heroFeaturedLink: "/#featured-projects-section",
+      heroTeamLabel: "Meet Team", heroTeamLink: "/team",
+      aboutTalkLabel: "Let's Talk", aboutTalkLink: "/contact",
+      aboutResumeLabel: "Download Resume", aboutResumeLink: "/Mohsin-Azeem-Resume.pdf"
+    },
+
+    // 🟢 MERGED: STUDIO STATS DATA
+    studioStats: {
+      projects: 70,
+      clients: 100,
+      awards: 12,
+      iconColor: "#a855f7",
+      textColor: "#ffffff",
+      subtitleColor: "#9ca3af",
+      animationSpeed: 1.5,
+      projectPercent: 80,
+      clientPercent: 100,
+      awardsPercent: 80
+    }
   };
 
   const [content, setContent] = useState(defaultContent);
 
-  // Load saved data
+  // Load saved data (New Logic: Merged from everywhere)
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("websiteThemeConfig"));
-    if (saved) {
-      // ✅ Safely merge saved data with defaults to prevent undefined errors
-      setContent({
-        ...defaultContent,
-        ...saved,
-        navbarMenu: saved.navbarMenu || defaultContent.navbarMenu,
-        servicesList: saved.servicesList || defaultContent.servicesList,
-        footerColumns: saved.footerColumns || defaultContent.footerColumns,
-        workProjects: saved.workProjects || defaultContent.workProjects,
-      });
+    // 1. Load Website Theme Config (Hero, Navbar, etc.)
+    const savedConfig = JSON.parse(localStorage.getItem("websiteThemeConfig"));
+    
+    // 2. Load Button Config
+    const savedButtons = JSON.parse(localStorage.getItem("buttonConfig"));
+
+    // 3. Load Studio Stats
+    const savedStats = JSON.parse(localStorage.getItem("studioStats"));
+
+    // Merge all data into one central state
+    if (savedConfig || savedButtons || savedStats) {
+      setContent((prev) => ({
+        ...prev,
+        ...savedConfig,
+        navbarMenu: savedConfig?.navbarMenu || prev.navbarMenu,
+        servicesList: savedConfig?.servicesList || prev.servicesList,
+        footerColumns: savedConfig?.footerColumns || prev.footerColumns,
+        workProjects: savedConfig?.workProjects || prev.workProjects,
+        teamMembers: savedConfig?.teamMembers || prev.teamMembers,
+        buttonConfig: { ...prev.buttonConfig, ...savedButtons },
+        studioStats: { ...prev.studioStats, ...savedStats },
+      }));
     }
   }, []);
 
   const handleSave = () => {
+    // Save data back to individual localStorage keys (to support legacy files)
     localStorage.setItem("websiteThemeConfig", JSON.stringify(content));
+    localStorage.setItem("buttonConfig", JSON.stringify(content.buttonConfig));
+    localStorage.setItem("studioStats", JSON.stringify(content.studioStats));
+
+    // Dispatch events for all systems
     window.dispatchEvent(new Event("themeUpdated"));
-    alert("✅ All Content Updated Successfully!");
+    window.dispatchEvent(new Event("buttonsUpdated"));
+    window.dispatchEvent(new Event("statsUpdated"));
+    
+    alert("✅ Central Brain Saved! All Website Data Updated Successfully!");
   };
 
   // 🟢 DYNAMIC ARRAY HANDLERS
-  const addNavbarItem = () => {
-    setContent({
-      ...content,
-      navbarMenu: [...content.navbarMenu, { label: "New Link", url: "/new-url" }],
-    });
-  };
-  const removeNavbarItem = (index) => {
-    const newMenu = content.navbarMenu.filter((_, i) => i !== index);
-    setContent({ ...content, navbarMenu: newMenu });
-  };
-  const updateNavbarItem = (index, field, value) => {
-    const newMenu = [...content.navbarMenu];
-    newMenu[index][field] = value;
-    setContent({ ...content, navbarMenu: newMenu });
-  };
+  const addNavbarItem = () => { setContent({...content, navbarMenu: [...content.navbarMenu, { label: "New Link", url: "/new-url" }]}); };
+  const removeNavbarItem = (index) => { const newMenu = content.navbarMenu.filter((_, i) => i !== index); setContent({ ...content, navbarMenu: newMenu }); };
+  const updateNavbarItem = (index, field, value) => { const newMenu = [...content.navbarMenu]; newMenu[index][field] = value; setContent({ ...content, navbarMenu: newMenu }); };
 
-  const addService = () => {
-    setContent({
-      ...content,
-      servicesList: [...content.servicesList, { title: "New Service", description: "Description here..." }],
-    });
-  };
-  const removeService = (index) => {
-    const newList = content.servicesList.filter((_, i) => i !== index);
-    setContent({ ...content, servicesList: newList });
-  };
-  const updateService = (index, field, value) => {
-    const newList = [...content.servicesList];
-    newList[index][field] = value;
-    setContent({ ...content, servicesList: newList });
-  };
+  const addService = () => { setContent({...content, servicesList: [...content.servicesList, { title: "New Service", description: "Description here..." }]}); };
+  const removeService = (index) => { const newList = content.servicesList.filter((_, i) => i !== index); setContent({ ...content, servicesList: newList }); };
+  const updateService = (index, field, value) => { const newList = [...content.servicesList]; newList[index][field] = value; setContent({ ...content, servicesList: newList }); };
 
-  const addWorkProject = () => {
-    setContent({
-      ...content,
-      workProjects: [...content.workProjects, { title: "New Project", description: "Description...", image: "/projects/fallback.jpg" }],
-    });
-  };
-  const removeWorkProject = (index) => {
-    const newList = content.workProjects.filter((_, i) => i !== index);
-    setContent({ ...content, workProjects: newList });
-  };
-  const updateWorkProject = (index, field, value) => {
-    const newList = [...content.workProjects];
-    newList[index][field] = value;
-    setContent({ ...content, workProjects: newList });
-  };
+  // 🟢 REMOVED: Work Project Handlers (Since we hid the section)
+  // const addWorkProject = () => { ... };
+  // const removeWorkProject = (index) => { ... };
+  // const updateWorkProject = (index, field, value) => { ... };
 
-  const addFooterColumn = () => {
-    setContent({
-      ...content,
-      footerColumns: [...content.footerColumns, { title: "New Column", links: [{ label: "New Link", url: "#" }] }],
-    });
-  };
-  const removeFooterColumn = (index) => {
-    const newCols = content.footerColumns.filter((_, i) => i !== index);
-    setContent({ ...content, footerColumns: newCols });
-  };
-  const addFooterLink = (colIndex) => {
-    const newCols = [...content.footerColumns];
-    newCols[colIndex].links.push({ label: "New Link", url: "#" });
-    setContent({ ...content, footerColumns: newCols });
-  };
-  const removeFooterLink = (colIndex, linkIndex) => {
-    const newCols = [...content.footerColumns];
-    newCols[colIndex].links = newCols[colIndex].links.filter((_, i) => i !== linkIndex);
-    setContent({ ...content, footerColumns: newCols });
-  };
-  const updateFooterLink = (colIndex, linkIndex, field, value) => {
-    const newCols = [...content.footerColumns];
-    newCols[colIndex].links[linkIndex][field] = value;
-    setContent({ ...content, footerColumns: newCols });
-  };
+  const addFooterColumn = () => { setContent({...content, footerColumns: [...content.footerColumns, { title: "New Column", links: [{ label: "New Link", url: "#" }] }]}); };
+  const removeFooterColumn = (index) => { const newCols = content.footerColumns.filter((_, i) => i !== index); setContent({ ...content, footerColumns: newCols }); };
+  const addFooterLink = (colIndex) => { const newCols = [...content.footerColumns]; newCols[colIndex].links.push({ label: "New Link", url: "#" }); setContent({ ...content, footerColumns: newCols }); };
+  const removeFooterLink = (colIndex, linkIndex) => { const newCols = [...content.footerColumns]; newCols[colIndex].links = newCols[colIndex].links.filter((_, i) => i !== linkIndex); setContent({ ...content, footerColumns: newCols }); };
+  const updateFooterLink = (colIndex, linkIndex, field, value) => { const newCols = [...content.footerColumns]; newCols[colIndex].links[linkIndex][field] = value; setContent({ ...content, footerColumns: newCols }); };
+
+  const addTeamMember = () => { setContent({...content, teamMembers: [...content.teamMembers, { name: "New Member", role: "Role", bio: "Bio...", image: "https://ui-avatars.com/api/?name=Member&background=0D0D0D&color=fff", email: "email@example.com", socialLink: "#" }]}); };
+  const removeTeamMember = (index) => { const newList = content.teamMembers.filter((_, i) => i !== index); setContent({ ...content, teamMembers: newList }); };
+  const updateTeamMember = (index, field, value) => { const newList = [...content.teamMembers]; newList[index][field] = value; setContent({ ...content, teamMembers: newList }); };
 
   return (
     <div className="flex h-screen bg-[#050505] overflow-hidden">
@@ -170,11 +190,13 @@ function ContentManager() {
         <main className="flex-1 overflow-y-auto relative">
           <div className="sticky top-0 z-20 bg-[#050505] px-8 py-6 border-b border-white/5 flex items-center justify-between shadow-lg">
             <div>
-              <h1 className="text-4xl font-bold text-white">Content Manager</h1>
-              <p className="mt-2 text-gray-400">Manage texts, links, and dynamic lists for the entire website.</p>
+              <h1 className="text-4xl font-bold text-white flex items-center gap-2">
+                <Globe size={28} className="text-purple-400" /> Central Brain
+              </h1>
+              <p className="mt-2 text-gray-400">Control EVERYTHING (Content, Buttons & Stats) from one place.</p>
             </div>
             <button onClick={handleSave} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-lg shadow-purple-900/30">
-              <Save size={18} /> Save All Content
+              <Save size={18} /> Save Central Brain
             </button>
           </div>
 
@@ -201,7 +223,6 @@ function ContentManager() {
                 <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-4 border-b border-white/5 pb-4"><Globe size={20} className="text-purple-400" /> Navbar Menu</h3>
                 <div className="space-y-4">
                   <div><label className="text-sm text-gray-400">Brand Name</label><input type="text" value={content.navbarBrand} onChange={(e) => setContent({...content, navbarBrand: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
-                  <div><label className="text-sm text-gray-400">Hire Button Text</label><input type="text" value={content.navbarHire} onChange={(e) => setContent({...content, navbarHire: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
                   <div className="border-t border-white/5 pt-4 mt-2">
                     <div className="flex items-center justify-between mb-4">
                       <p className="text-sm font-medium text-gray-400">Menu Links</p>
@@ -247,6 +268,72 @@ function ContentManager() {
                 </div>
               </div>
 
+              {/* 🟢 BUTTON MANAGER (Embedded inside Brain) */}
+              <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl p-6 shadow-lg relative overflow-hidden lg:col-span-2">
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-purple-600/10 blur-[50px] pointer-events-none"></div>
+                <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-4 border-b border-white/5 pb-4"><Layout size={20} className="text-purple-400" /> Global Button Settings</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-sm text-gray-400 font-medium mb-3">Navbar Buttons</h4>
+                    <div className="space-y-3">
+                      <div className="flex gap-2"><input type="text" value={content.buttonConfig.navHireLabel} onChange={(e) => setContent({...content, buttonConfig: {...content.buttonConfig, navHireLabel: e.target.value}})} placeholder="Hire Label" className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm text-gray-400 font-medium mb-3">Hero & About Buttons</h4>
+                    <div className="space-y-3">
+                      <div className="flex gap-2"><input type="text" value={content.buttonConfig.heroPortfolioLabel} onChange={(e) => setContent({...content, buttonConfig: {...content.buttonConfig, heroPortfolioLabel: e.target.value}})} placeholder="Portfolio Label" className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                      <div className="flex gap-2"><input type="text" value={content.buttonConfig.aboutTalkLabel} onChange={(e) => setContent({...content, buttonConfig: {...content.buttonConfig, aboutTalkLabel: e.target.value}})} placeholder="Talk Label" className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 🟢 STUDIO STATS (Embedded inside Brain) */}
+              <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl p-6 shadow-lg relative overflow-hidden lg:col-span-2">
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-purple-600/10 blur-[50px] pointer-events-none"></div>
+                <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-4 border-b border-white/5 pb-4"><Gauge size={20} className="text-purple-400" /> Studio Stats & Colors</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div><label className="text-sm text-gray-400">Projects</label><input type="number" value={content.studioStats.projects} onChange={(e) => setContent({...content, studioStats: {...content.studioStats, projects: parseInt(e.target.value)}})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
+                  <div><label className="text-sm text-gray-400">Clients</label><input type="number" value={content.studioStats.clients} onChange={(e) => setContent({...content, studioStats: {...content.studioStats, clients: parseInt(e.target.value)}})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
+                  <div><label className="text-sm text-gray-400">Awards</label><input type="number" value={content.studioStats.awards} onChange={(e) => setContent({...content, studioStats: {...content.studioStats, awards: parseInt(e.target.value)}})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
+                  <div><label className="text-sm text-gray-400 flex items-center gap-2"><Palette size={14} className="text-purple-400" /> Circle Color</label><input type="color" value={content.studioStats.iconColor} onChange={(e) => setContent({...content, studioStats: {...content.studioStats, iconColor: e.target.value}})} className="w-full h-10 bg-[#0a0a0a] border border-white/10 rounded-xl cursor-pointer" /></div>
+                  <div><label className="text-sm text-gray-400 flex items-center gap-2"><Star size={14} className="text-yellow-400" /> Text Color</label><input type="color" value={content.studioStats.textColor} onChange={(e) => setContent({...content, studioStats: {...content.studioStats, textColor: e.target.value}})} className="w-full h-10 bg-[#0a0a0a] border border-white/10 rounded-xl cursor-pointer" /></div>
+                  <div><label className="text-sm text-gray-400">Speed (sec)</label><input type="number" step="0.1" value={content.studioStats.animationSpeed} onChange={(e) => setContent({...content, studioStats: {...content.studioStats, animationSpeed: parseFloat(e.target.value)}})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
+                </div>
+              </div>
+
+              {/* TEAM SECTION */}
+              <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl p-6 shadow-lg relative overflow-hidden lg:col-span-2">
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-purple-600/10 blur-[50px] pointer-events-none"></div>
+                <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-4 border-b border-white/5 pb-4"><Users size={20} className="text-purple-400" /> Team Section</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div><label className="text-sm text-gray-400">Page Title</label><input type="text" value={content.teamTitle} onChange={(e) => setContent({...content, teamTitle: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
+                    <div><label className="text-sm text-gray-400">Page Subtitle</label><input type="text" value={content.teamSubtitle} onChange={(e) => setContent({...content, teamSubtitle: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
+                  </div>
+                  <div className="border-t border-white/5 pt-4 mt-2">
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-sm font-medium text-gray-400">Team Members</p>
+                      <button onClick={addTeamMember} className="flex items-center gap-1 text-xs bg-purple-600/20 text-purple-300 px-3 py-1 rounded-full hover:bg-purple-600/40 transition"><Plus size={14} /> Add Member</button>
+                    </div>
+                    <div className="space-y-3">
+                      {content.teamMembers.map((member, index) => (
+                        <div key={index} className="flex flex-wrap items-center gap-3 bg-black/40 p-4 rounded-xl border border-white/5">
+                          <div className="flex-1 min-w-[140px]"><label className="text-[10px] text-gray-500 uppercase tracking-wider">Name</label><input type="text" value={member.name} onChange={(e) => updateTeamMember(index, 'name', e.target.value)} placeholder="Name" className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                          <div className="flex-1 min-w-[140px]"><label className="text-[10px] text-gray-500 uppercase tracking-wider">Role</label><input type="text" value={member.role} onChange={(e) => updateTeamMember(index, 'role', e.target.value)} placeholder="Role" className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                          <div className="flex-1 min-w-[200px]"><label className="text-[10px] text-gray-500 uppercase tracking-wider">Bio</label><input type="text" value={member.bio} onChange={(e) => updateTeamMember(index, 'bio', e.target.value)} placeholder="Short Bio" className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                          <div className="flex-1 min-w-[140px]"><label className="text-[10px] text-gray-500 uppercase tracking-wider flex items-center gap-1"><ImageIcon size={12} className="text-purple-400" /> Image URL</label><input type="text" value={member.image} onChange={(e) => updateTeamMember(index, 'image', e.target.value)} placeholder="Image URL" className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                          <div className="flex-1 min-w-[140px]"><label className="text-[10px] text-gray-500 uppercase tracking-wider">Email</label><input type="text" value={member.email} onChange={(e) => updateTeamMember(index, 'email', e.target.value)} placeholder="Email" className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                          <div className="flex-1 min-w-[140px]"><label className="text-[10px] text-gray-500 uppercase tracking-wider">Social Link</label><input type="text" value={member.socialLink} onChange={(e) => updateTeamMember(index, 'socialLink', e.target.value)} placeholder="Social URL" className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none" /></div>
+                          <button onClick={() => removeTeamMember(index)} className="text-red-400 hover:text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition mt-4"><Trash2 size={16} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* ABOUT PAGE */}
               <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl p-6 shadow-lg relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-purple-600/10 blur-[50px] pointer-events-none"></div>
@@ -270,6 +357,13 @@ function ContentManager() {
                   <div><label className="text-sm text-gray-400">Send Button Text</label><input type="text" value={content.contactBtnText} onChange={(e) => setContent({...content, contactBtnText: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500" /></div>
                 </div>
               </div>
+
+              {/* 🟢 WORK / PORTFOLIO SECTION HIDDEN (SIDED) */}
+              {/* 
+              <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl p-6 shadow-lg relative overflow-hidden lg:col-span-2">
+                ...
+              </div> 
+              */}
 
               {/* FOOTER */}
               <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl p-6 shadow-lg relative overflow-hidden lg:col-span-2">
@@ -311,6 +405,7 @@ function ContentManager() {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </main>

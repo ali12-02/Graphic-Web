@@ -8,6 +8,8 @@ import { ShieldUser } from "lucide-react";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  
+  // 🟢 Default Data
   const [navData, setNavData] = useState({
     brand: "Kreative Art & Design Studio",
     hire: "Hire Me",
@@ -15,6 +17,7 @@ function Navbar() {
       { label: "Work", url: "/work" },
       { label: "Services", url: "/services" },
       { label: "About", url: "/about" },
+      { label: "Team", url: "/team" },
       { label: "Contact", url: "/contact" },
     ],
   });
@@ -23,21 +26,38 @@ function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 80);
     };
-
     window.addEventListener("scroll", handleScroll);
 
-    // 🟢 LOAD DYNAMIC MENU FROM THEME SETTINGS
-    const saved = JSON.parse(localStorage.getItem("websiteThemeConfig"));
-    if (saved && saved.navbarMenu) {
+    // 🟢 1. Load Data from CENTRAL BRAIN (Content Manager)
+    const brain = JSON.parse(localStorage.getItem("websiteThemeConfig"));
+    
+    if (brain) {
       setNavData((prev) => ({
         ...prev,
-        brand: saved.navbarBrand || prev.brand,
-        hire: saved.navbarHire || prev.hire,
-        menu: saved.navbarMenu || prev.menu,
+        brand: brain.navbarBrand || prev.brand,
+        hire: brain.buttonConfig?.navHireLabel || prev.hire,
+        menu: brain.navbarMenu || prev.menu
       }));
     }
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    // 🟢 2. Listen for Live Updates from Brain
+    const handleUpdate = () => {
+      const updatedBrain = JSON.parse(localStorage.getItem("websiteThemeConfig"));
+      if (updatedBrain) {
+        setNavData((prev) => ({
+          ...prev,
+          brand: updatedBrain.navbarBrand || prev.brand,
+          hire: updatedBrain.buttonConfig?.navHireLabel || prev.hire,
+          menu: updatedBrain.navbarMenu || prev.menu
+        }));
+      }
+    };
+    window.addEventListener("themeUpdated", handleUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("themeUpdated", handleUpdate);
+    };
   }, []);
 
   return (
@@ -56,12 +76,7 @@ function Navbar() {
 
           {/* Left */}
           <Link to="/" className="absolute left-10 flex items-center">
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-20 w-auto object-contain"
-            />
-
+            <img src={logo} alt="Logo" className="h-20 w-auto object-contain" />
             <motion.span
               initial={false}
               animate={{
@@ -79,21 +94,12 @@ function Navbar() {
 
           {/* Center */}
           <div className="absolute left-[47%] -translate-x-1/2 flex items-center justify-center">
-
             {!scrolled ? (
-
               <h2 className="cursor-pointer whitespace-nowrap text-sm font-bold uppercase tracking-[5px] text-white transition-all duration-300 hover:text-violet-400">
                 BRAND IDENTITY DESIGNER
               </h2>
-
             ) : (
-
-              <motion.ul
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-10 text-white"
-              >
-                {/* 🟢 DYNAMIC MENU ITEMS */}
+              <motion.ul initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-10 text-white">
                 {navData.menu.map((item, index) => (
                   <li key={index}>
                     <Link to={item.url} className="hover:text-purple-400 transition-colors">
@@ -102,40 +108,22 @@ function Navbar() {
                   </li>
                 ))}
               </motion.ul>
-
             )}
-
           </div>
 
           {/* Right */}
           <div className="absolute right-10 flex items-center">
-
             {!scrolled ? (
-
-              <Link
-                to="/admin"
-                className="group flex items-center gap-3 text-white transition-all duration-300"
-              >
+              <Link to="/admin" className="group flex items-center gap-3 text-white transition-all duration-300">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 transition-all duration-300 group-hover:border-violet-500 group-hover:bg-violet-600">
-                  <ShieldUser
-                    size={19}
-                    className="transition-colors duration-300 group-hover:text-white"
-                  />
+                  <ShieldUser size={19} className="transition-colors duration-300 group-hover:text-white" />
                 </div>
-
                 <span className="font-semibold uppercase tracking-[2px] transition-colors duration-300 group-hover:text-violet-400">
                   ADMIN
                 </span>
-
               </Link>
-
             ) : (
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.35 }}
-              >
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
                 <Link
                   to="/contact"
                   className="flex whitespace-nowrap items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-black transition hover:bg-purple-600 hover:text-white"
@@ -144,9 +132,7 @@ function Navbar() {
                   <FaArrowRight />
                 </Link>
               </motion.div>
-
             )}
-
           </div>
 
         </nav>

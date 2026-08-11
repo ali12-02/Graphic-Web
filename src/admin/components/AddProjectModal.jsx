@@ -13,7 +13,7 @@ function AddProjectModal({
   const [categories, setCategories] = useState([]);
 
   const [image, setImage] = useState("");
-  const [pdf, setPdf] = useState("");
+  const [pdf, setPdf] = useState(""); // 🟢 Now stores URL
   const [status, setStatus] = useState("Published");
 
   // TOOLS, GALLERY & FIELDS STATES
@@ -47,7 +47,7 @@ function AddProjectModal({
       setCategory(editProject.category || "");
       setDescription(editProject.description || "");
       setImage(editProject.image || "");
-      setPdf(editProject.pdf || "");
+      setPdf(editProject.pdf || ""); // 🟢 Load URL
       setStatus(editProject.status || "Published");
       setSelectedTools(editProject.tools || []);
       setSelectedFields(editProject.fields || []);
@@ -70,14 +70,6 @@ function AddProjectModal({
     if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () => setImage(reader.result);
-    reader.readAsDataURL(file);
-  };
-
-  const handlePdf = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => setPdf(reader.result);
     reader.readAsDataURL(file);
   };
 
@@ -132,12 +124,12 @@ function AddProjectModal({
       category,
       description,
       image,
-      pdf,
+      pdf, // 🟢 Direct URL save ho raha hai
       status: status,
       tools: selectedTools,
       fields: selectedFields,
       gallery: galleryData,
-      featured: editProject?.featured || false, // 🟢 Preserve featured if editing
+      featured: editProject?.featured || false,
       createdAt: editProject?.createdAt || new Date().toISOString(),
     });
 
@@ -153,7 +145,6 @@ function AddProjectModal({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-black/70 backdrop-blur-sm">
-      {/* 🟢 FIX: Widen the modal (max-w-4xl instead of max-w-2xl) */}
       <div className="my-10 w-full max-w-4xl rounded-3xl border border-white/10 bg-[#111111] p-8 shadow-2xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -239,11 +230,23 @@ function AddProjectModal({
             {image && <img src={image} alt="" className="mt-4 h-48 w-full rounded-2xl object-cover" />}
           </div>
 
-          {/* PDF */}
+          {/* 🟢 UPDATED: PDF URL Input (File upload removed) */}
           <div>
-            <label className="mb-2 flex items-center gap-2 text-sm text-gray-300"><FileText size={18} /> Upload PDF (Optional)</label>
-            <input type="file" accept=".pdf" onChange={handlePdf} className="w-full rounded-2xl border border-white/10 bg-[#1a1a1a] p-3 text-white" />
-            {pdf && <p className="mt-3 text-green-400">✅ PDF Selected</p>}
+            <label className="mb-2 flex items-center gap-2 text-sm text-gray-300">
+              <FileText size={18} /> PDF URL (Optional)
+            </label>
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 text-white outline-none transition focus-within:border-purple-500">
+              <FileText className="w-5 h-5 text-gray-400" />
+              <input 
+                type="text" 
+                value={pdf}
+                onChange={(e) => setPdf(e.target.value)}
+                placeholder="Paste Google Drive /preview link here..."
+                className="w-full bg-transparent text-white placeholder:text-gray-500 outline-none"
+              />
+            </div>
+            <p className="mt-2 text-xs text-gray-500">Upload PDF to Google Drive & paste the /preview link here.</p>
+            {pdf && <p className="mt-2 text-green-400 text-sm">✅ PDF URL Linked</p>}
           </div>
         </div>
 

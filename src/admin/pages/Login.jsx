@@ -29,6 +29,15 @@ function Login() {
     }
   };
 
+  // 🟢 FIXED BYPASS FUNCTION
+  const handleBypass = (e) => {
+    e.preventDefault();
+    // Create a dummy login session so ProtectedRoute allows access
+    localStorage.setItem("admin", "true");
+    localStorage.setItem("token", "bypass_token_123");
+    navigate("/dashboard");
+  };
+
   return (
     <div className="relative min-h-screen bg-[#050505] overflow-hidden flex items-center justify-center px-6">
 
@@ -116,14 +125,14 @@ function Login() {
           </button>
         </form>
 
-        {/* 🟢 NEW: Bypass Link for Testing */}
+        {/* 🟢 WORKING BYPASS LINK FOR TESTING */}
         <div className="mt-8 border-t border-white/10 pt-6 text-center">
-          <Link
-            to="/dashboard"
+          <button
+            onClick={handleBypass}
             className="text-xs text-gray-500 hover:text-purple-400 transition-colors underline decoration-transparent hover:decoration-purple-400 underline-offset-2"
           >
             [ Test Mode: Skip Login → ]
-          </Link>
+          </button>
         </div>
 
         <div className="mt-4 text-center text-sm text-gray-500">

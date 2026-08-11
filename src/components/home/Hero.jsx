@@ -40,26 +40,19 @@ function Hero() {
   
   const [counts, setCounts] = useState({ projects: 0, clients: 0, awards: 0 });
 
+  // 🟢 NEW: Load ALL data from Central Brain
   const loadAllData = () => {
     const savedProjects = JSON.parse(localStorage.getItem("projects")) || [];
     const featuredList = savedProjects.filter((project) => project.featured === true);
     setAllFeaturedProjects(featuredList);
 
+    // 1. Reel Data
     const savedOffers = JSON.parse(localStorage.getItem("offers")) || [];
-    if (savedOffers.length > 0) {
-      setReelItems(savedOffers);
-    } else {
-      setReelItems([
-        "✦ Brand Identity Design",
-        "✦ Logo Design",
-        "✦ Website Design",
-        "✦ UI / UX Design",
-        "✦ Social Media Marketing",
-        "✦ Packaging Design",
-        "✦ 24/7 Support Available",
-        "✦ 100% Client Satisfaction",
-      ]);
-    }
+    setReelItems(savedOffers.length > 0 ? savedOffers : [
+        "✦ Brand Identity Design", "✦ Logo Design", "✦ Website Design", 
+        "✦ UI / UX Design", "✦ Social Media Marketing", "✦ Packaging Design",
+        "✦ 24/7 Support Available", "✦ 100% Client Satisfaction",
+    ]);
 
     const savedTextColor = localStorage.getItem("reelColor");
     if (savedTextColor) setReelTextColor(savedTextColor);
@@ -74,20 +67,37 @@ function Hero() {
     const savedPosition = localStorage.getItem("reelPosition");
     if (savedPosition) setReelPosition(savedPosition);
 
-    const savedSettings = JSON.parse(localStorage.getItem("websiteThemeConfig"));
-    if (savedSettings) setSettings(savedSettings);
+    // 2. Load Data from CENTRAL BRAIN (Content Manager)
+    const brain = JSON.parse(localStorage.getItem("websiteThemeConfig"));
+    if (brain) {
+      setSettings({
+        bgColor: brain.heroBgColor || "#050505",
+        textColor: brain.heroTextColor || "#ffffff",
+        accentColor: brain.heroAccentColor || "#a855f7",
+        heroTitle: brain.heroTitle || "Mohsin Azeem",
+        heroSubtitle: brain.heroSubtitle || "Creative Director & Brand Identity Designer",
+        heroBio: brain.heroBio || "I design brands, websites and digital experiences that leave a lasting impression.",
+        heroLocation: brain.heroLocation || "Faisalabad, Pakistan",
+        heroWebsite: brain.heroWebsite || "www.kreativedesign.com",
+        heroProfileImage: brain.heroProfileImage || "https://ui-avatars.com/api/?name=Mohsin+Azeem&size=200&background=0D0D0D&color=fff",
+      });
 
-    const savedStats = JSON.parse(localStorage.getItem("studioStats")) || { 
-      projects: 70, clients: 100, awards: 12,
-      iconColor: "#a855f7",
-      textColor: "#ffffff",
-      subtitleColor: "#9ca3af",
-      animationSpeed: 1.5,
-      projectPercent: 80,
-      clientPercent: 100,
-      awardsPercent: 80
-    };
-    setStats(savedStats);
+      // 3. Load Stats from Brain
+      if (brain.studioStats) {
+        setStats({
+          projects: brain.studioStats.projects || 0,
+          clients: brain.studioStats.clients || 0,
+          awards: brain.studioStats.awards || 0,
+          iconColor: brain.studioStats.iconColor || "#a855f7",
+          textColor: brain.studioStats.textColor || "#ffffff",
+          subtitleColor: brain.studioStats.subtitleColor || "#9ca3af",
+          animationSpeed: brain.studioStats.animationSpeed || 1.5,
+          projectPercent: brain.studioStats.projectPercent || 80,
+          clientPercent: brain.studioStats.clientPercent || 100,
+          awardsPercent: brain.studioStats.awardsPercent || 80
+        });
+      }
+    }
     setCounts({ projects: 0, clients: 0, awards: 0 });
   };
 
@@ -145,6 +155,7 @@ function Hero() {
 
   return (
     <section className="relative overflow-hidden min-h-screen pt-28 pb-16 lg:pt-36 lg:pb-24 flex flex-col" style={{ backgroundColor: settings.bgColor }}>
+      {/* [Baki Background Glows aur JSX bilkul waisa hi rakhein] */}
       <div className="absolute top-[-300px] right-[-300px] w-[800px] h-[800px] rounded-full bg-violet-600/15 blur-[180px]" />
       <div className="absolute bottom-[-300px] left-[-300px] w-[600px] h-[600px] rounded-full bg-fuchsia-500/10 blur-[150px]" />
       <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop)` }} />
@@ -197,17 +208,11 @@ function Hero() {
         </div>
       </div>
 
-      {/* 🔥 FIXED REEL (Ab mid se start nahi hogi, bilkul RIGHT side se andar aayegi) */}
+      {/* Reel Section */}
       {showReelHere && (
         <div className="relative z-10 w-full mb-16">
           <div className="w-screen relative left-[50%] right-[50%] -mx-[50vw] overflow-hidden py-4 rounded-none border-y border-white/5 bg-[#0f0f0f]/50" style={{ backgroundColor: reelBgColor }}>
-            <motion.div 
-              className={`flex whitespace-nowrap gap-10 ${reelFontWeight} tracking-wider`}
-              style={{ color: reelTextColor, fontSize: `${reelFontSize}px` }}
-              animate={{ x: ["0%", "-100%"] }} 
-              transition={{ repeat: Infinity, ease: "linear", duration: reelSpeed }}
-            >
-              {/* Text ko 2 baar repeat kiya taake loop perfect ho */}
+            <motion.div className={`flex whitespace-nowrap gap-10 ${reelFontWeight} tracking-wider`} style={{ color: reelTextColor, fontSize: `${reelFontSize}px` }} animate={{ x: ["0%", "-100%"] }} transition={{ repeat: Infinity, ease: "linear", duration: reelSpeed }}>
               {[...reelItems, ...reelItems].map((item, index) => (
                 <span key={index} className="flex items-center gap-2 cursor-default">{item}</span>
               ))}
@@ -239,7 +244,7 @@ function Hero() {
         </div>
       )}
 
-      {/* 🔥 UPDATED STATS (Ab icons theme color k sath match karenge) */}
+      {/* Stats Section */}
       <div id="studio-stats-section" className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 mb-16">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-2">
@@ -249,24 +254,13 @@ function Hero() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-          
-          {/* 1. Projects */}
           <div className="flex flex-col items-center group">
             <div className="relative w-44 h-44 lg:w-52 lg:h-52">
               <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="42" stroke="#ffffff" strokeOpacity="0.1" strokeWidth="8" fill="transparent" />
-                <motion.circle 
-                  cx="50" cy="50" r="42" 
-                  stroke={stats.iconColor} strokeWidth="8" 
-                  fill="transparent" strokeLinecap="round"
-                  initial={{ strokeDasharray: "0 264" }} 
-                  whileInView={{ strokeDasharray: `${stats.projectPercent * 2.64} 264` }} 
-                  transition={{ duration: stats.animationSpeed, ease: [0.34, 1.56, 0.64, 1] }} 
-                  viewport={{ once: true }} 
-                />
+                <motion.circle cx="50" cy="50" r="42" stroke={stats.iconColor} strokeWidth="8" fill="transparent" strokeLinecap="round" initial={{ strokeDasharray: "0 264" }} whileInView={{ strokeDasharray: `${stats.projectPercent * 2.64} 264` }} transition={{ duration: stats.animationSpeed, ease: [0.34, 1.56, 0.64, 1] }} viewport={{ once: true }} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {/* Theme Color Folder Icon */}
                 <FolderOpen size={32} className="mb-1" style={{ color: stats.iconColor, filter: `drop-shadow(0 0 10px ${stats.iconColor}40)` }} />
                 <span className="text-4xl font-bold" style={{ color: stats.textColor }}>{counts.projects}+</span>
               </div>
@@ -275,23 +269,13 @@ function Hero() {
             <p className="mt-1 text-sm text-center max-w-xs" style={{ color: stats.subtitleColor }}>A proven track record of delivering quality designs.</p>
           </div>
 
-          {/* 2. Clients */}
           <div className="flex flex-col items-center group">
             <div className="relative w-44 h-44 lg:w-52 lg:h-52">
               <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="42" stroke="#ffffff" strokeOpacity="0.1" strokeWidth="8" fill="transparent" />
-                <motion.circle 
-                  cx="50" cy="50" r="42" 
-                  stroke={stats.iconColor} strokeWidth="8" 
-                  fill="transparent" strokeLinecap="round"
-                  initial={{ strokeDasharray: "0 264" }} 
-                  whileInView={{ strokeDasharray: `${stats.clientPercent * 2.64} 264` }} 
-                  transition={{ duration: stats.animationSpeed, ease: [0.34, 1.56, 0.64, 1] }} 
-                  viewport={{ once: true }} 
-                />
+                <motion.circle cx="50" cy="50" r="42" stroke={stats.iconColor} strokeWidth="8" fill="transparent" strokeLinecap="round" initial={{ strokeDasharray: "0 264" }} whileInView={{ strokeDasharray: `${stats.clientPercent * 2.64} 264` }} transition={{ duration: stats.animationSpeed, ease: [0.34, 1.56, 0.64, 1] }} viewport={{ once: true }} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {/* Theme Color Users Icon */}
                 <Users size={32} className="mb-1" style={{ color: stats.iconColor, filter: `drop-shadow(0 0 10px ${stats.iconColor}40)` }} />
                 <span className="text-4xl font-bold" style={{ color: stats.textColor }}>{counts.clients}+</span>
               </div>
@@ -300,23 +284,13 @@ function Hero() {
             <p className="mt-1 text-sm text-center max-w-xs" style={{ color: stats.subtitleColor }}>Loved by amazing clients around the world.</p>
           </div>
 
-          {/* 3. Awards Won */}
           <div className="flex flex-col items-center group">
             <div className="relative w-44 h-44 lg:w-52 lg:h-52">
               <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="42" stroke="#ffffff" strokeOpacity="0.1" strokeWidth="8" fill="transparent" />
-                <motion.circle 
-                  cx="50" cy="50" r="42" 
-                  stroke={stats.iconColor} strokeWidth="8" 
-                  fill="transparent" strokeLinecap="round"
-                  initial={{ strokeDasharray: "0 264" }} 
-                  whileInView={{ strokeDasharray: `${(stats.awardsPercent || 80) * 2.64} 264` }} 
-                  transition={{ duration: stats.animationSpeed, ease: [0.34, 1.56, 0.64, 1] }} 
-                  viewport={{ once: true }} 
-                />
+                <motion.circle cx="50" cy="50" r="42" stroke={stats.iconColor} strokeWidth="8" fill="transparent" strokeLinecap="round" initial={{ strokeDasharray: "0 264" }} whileInView={{ strokeDasharray: `${(stats.awardsPercent || 80) * 2.64} 264` }} transition={{ duration: stats.animationSpeed, ease: [0.34, 1.56, 0.64, 1] }} viewport={{ once: true }} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {/* Theme Color Award Icon (Gold background remove kar diya) */}
                 <div className="mb-1 flex items-center justify-center">
                   <Award size={34} style={{ color: stats.iconColor, filter: `drop-shadow(0 0 15px ${stats.iconColor}60)` }} />
                 </div>

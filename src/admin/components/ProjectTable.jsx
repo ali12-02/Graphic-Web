@@ -1,9 +1,12 @@
-import { Pencil, Trash2, Star, Eye } from "lucide-react";
+import { Pencil, Trash2, Star, Eye, FolderOpen } from "lucide-react"; // 🟢 FolderOpen Import Add Kiya
 import { Link } from "react-router-dom";
 
-function ProjectTable({ projects, onDelete, onEdit, onToggleFeatured }) {
+function ProjectTable({ projects = [], onDelete, onEdit, onToggleFeatured }) {
+  // 🟢 Safe check: Agar projects undefined ya empty hai toh message dikhayein
+  const hasProjects = projects && projects.length > 0;
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#111]">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#111] shadow-lg">
       <table className="w-full">
         <thead className="border-b border-white/10 bg-[#181818]">
           <tr>
@@ -25,18 +28,22 @@ function ProjectTable({ projects, onDelete, onEdit, onToggleFeatured }) {
           </tr>
         </thead>
 
-        <tbody>
-          {projects.length === 0 ? (
+        <tbody className="divide-y divide-white/5">
+          {!hasProjects ? (
             <tr>
               <td colSpan="5" className="px-6 py-16 text-center text-gray-500">
-                No projects added yet.
+                <div className="flex flex-col items-center gap-2">
+                  <FolderOpen size={40} className="opacity-20" />
+                  <p className="text-lg font-medium">No projects added yet.</p>
+                  <p className="text-sm text-gray-600">Click "New Project" to get started.</p>
+                </div>
               </td>
             </tr>
           ) : (
             projects.map((project) => (
               <tr
                 key={project.id}
-                className="border-b border-white/5 transition-all duration-300 hover:bg-white/5"
+                className="border-b border-white/5 transition-all duration-300 hover:bg-white/5 last:border-0"
               >
                 <td className="px-6 py-5 font-medium text-white">
                   {project.title}
@@ -74,7 +81,7 @@ function ProjectTable({ projects, onDelete, onEdit, onToggleFeatured }) {
                 <td className="px-6 py-5">
                   <div className="flex justify-end gap-3">
                     
-                    {/* 🟢 NEW: View Live Project (Eye Icon) */}
+                    {/* View Live Project (Eye Icon) */}
                     <Link
                       to={`/project/${project.id}`}
                       target="_blank"

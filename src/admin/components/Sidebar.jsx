@@ -7,10 +7,8 @@ import {
   Settings,
   Plus,
   Tags,
-  BarChart3,
   Palette,
   FileText,
-  MousePointer2,
   Search, // ✅ Icon for Empty State
 } from "lucide-react";
 
@@ -54,17 +52,16 @@ function Sidebar({ searchTerm = "" }) {
     return () => window.removeEventListener("globalThemeUpdated", handleGlobalUpdate);
   }, []);
 
+  // 🟢 CHANGE: Removed Stats & Button Manager from menu
   const menu = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { name: "Projects", icon: FolderKanban, path: "/dashboard/projects" },
     { name: "Add Project", icon: Plus, path: "/dashboard/add-project" },
     { name: "Offers", icon: Tags, path: "/dashboard/offers" },
-    { name: "Studio Stats", icon: BarChart3, path: "/dashboard/stats" },
     { name: "Theme Settings", icon: Palette, path: "/dashboard/theme-settings" },
     { name: "Content Manager", icon: FileText, path: "/dashboard/content-manager" },
     { name: "Categories", icon: FolderTree, path: "/dashboard/categories" },
     { name: "Settings", icon: Settings, path: "/dashboard/settings" },
-    { name: "Button Manager", icon: MousePointer2, path: "/dashboard/button-manager" },
   ];
 
   // 🟢 CHANGE 2: Filter menu items based on searchTerm

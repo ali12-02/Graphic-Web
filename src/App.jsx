@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion"; // ✅ Imported
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
 // Common Components
@@ -17,6 +17,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Work from "./pages/Work";
 import Contact from "./pages/Contact";
+import Team from "./pages/Team";
 import ProjectPreview from "./pages/ProjectPreview";
 
 // Admin Pages
@@ -26,10 +27,9 @@ import ProjectsAdmin from "./admin/pages/Projects";
 import AddProject from "./admin/pages/AddProject";
 import Categories from "./admin/pages/Categories";
 import Offers from "./admin/pages/Offers";
-import Stats from "./admin/pages/Stats";
+// 🟢 REMOVED: Stats and ButtonManager imports (Ab Brain manage karega)
 import ThemeSettings from "./admin/pages/ThemeSettings";
 import ContentManager from "./admin/pages/ContentManager";
-import ButtonManager from "./admin/pages/ButtonManager"; // ✅ IMPORT ADDED
 
 // Admin Layout
 import ProtectedRoute from "./admin/layout/ProtectedRoute";
@@ -76,7 +76,6 @@ function App() {
       {!hideLayout && <MouseReveal />}
       {!hideLayout && <Navbar />}
 
-      {/* 🟢 AnimatePresence enables smooth enter/exit animations */}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* Home */}
@@ -96,6 +95,9 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/work" element={<Work />} />
           <Route path="/contact" element={<Contact />} />
+
+          {/* Team Page Route */}
+          <Route path="/team" element={<Team />} />
 
           {/* Project Preview Route */}
           <Route
@@ -149,15 +151,7 @@ function App() {
             }
           />
 
-          {/* Stats Route */}
-          <Route
-            path="/dashboard/stats"
-            element={
-              <ProtectedRoute>
-                <Stats />
-              </ProtectedRoute>
-            }
-          />
+          {/* 🟢 REMOVED: Stats Route (Now managed by ContentManager Brain) */}
 
           {/* ThemeSettings Route */}
           <Route
@@ -169,7 +163,7 @@ function App() {
             }
           />
 
-          {/* Content Manager Route */}
+          {/* Content Manager (Central Brain) Route */}
           <Route
             path="/dashboard/content-manager"
             element={
@@ -179,15 +173,7 @@ function App() {
             }
           />
 
-          {/* ✅ NEW: Button Manager Route */}
-          <Route
-            path="/dashboard/button-manager"
-            element={
-              <ProtectedRoute>
-                <ButtonManager />
-              </ProtectedRoute>
-            }
-          />
+          {/* 🟢 REMOVED: Button Manager Route (Now managed by ContentManager Brain) */}
 
           {/* Categories */}
           <Route

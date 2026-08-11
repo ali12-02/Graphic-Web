@@ -39,19 +39,14 @@ export default function AboutSection() {
 
     const savedTextColor = localStorage.getItem("reelColor");
     if (savedTextColor) setReelTextColor(savedTextColor);
-
     const savedBgColor = localStorage.getItem("reelBgColor");
     if (savedBgColor) setReelBgColor(savedBgColor);
-
     const savedFontSize = localStorage.getItem("reelFontSize");
     if (savedFontSize) setReelFontSize(parseInt(savedFontSize) || 14);
-
     const savedFontWeight = localStorage.getItem("reelFontWeight");
     if (savedFontWeight) setReelFontWeight(savedFontWeight);
-
     const savedSpeed = localStorage.getItem("reelSpeed");
     if (savedSpeed) setReelSpeed(parseInt(savedSpeed) || 25);
-
     const savedPosition = localStorage.getItem("reelPosition");
     if (savedPosition) setReelPosition(savedPosition);
   }, []);
@@ -64,13 +59,14 @@ export default function AboutSection() {
   });
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("websiteThemeConfig"));
-    if (saved) {
+    // 🟢 Load from CENTRAL BRAIN
+    const brain = JSON.parse(localStorage.getItem("websiteThemeConfig"));
+    if (brain) {
       setContent({
-        heading: saved.aboutHeading || "About Us",
-        title: saved.aboutTitle || "Designing Brands That People Remember.",
-        text1: saved.aboutText1 || "Welcome to our creative world!...",
-        text2: saved.aboutText2 || "Whether you're launching a startup...",
+        heading: brain.aboutHeading || "About Us",
+        title: brain.aboutTitle || "Designing Brands That People Remember.",
+        text1: brain.aboutText1 || "Welcome to our creative world!...",
+        text2: brain.aboutText2 || "Whether you're launching a startup...",
       });
     }
   }, []);
@@ -109,11 +105,9 @@ export default function AboutSection() {
               <motion.div 
                 className={`flex whitespace-nowrap gap-10 ${reelFontWeight} tracking-wider`}
                 style={{ color: reelTextColor, fontSize: `${reelFontSize}px` }}
-                // 🟢 FIX: Start from 0% and end at -50% (infinite loop with duplicated items)
                 animate={{ x: ["0%", "-50%"] }} 
                 transition={{ repeat: Infinity, ease: "linear", duration: reelSpeed }}
               >
-                {/* 🟢 FIX: Items ko double kiya taake continuous chale */}
                 {[...reelItems, ...reelItems].map((item, index) => (
                   <span key={index} className="flex items-center gap-2 cursor-default">{item}</span>
                 ))}

@@ -42,7 +42,8 @@ function AddProject() {
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [galleryPreviews, setGalleryPreviews] = useState([]);
   
-  const [pdfFile, setPdfFile] = useState(null);
+  // 🟢 Changed: PDF file upload se PDF URL string
+  const [pdfUrl, setPdfUrl] = useState('');
 
   useEffect(() => {
     const savedCategories = JSON.parse(localStorage.getItem('categories')) || [];
@@ -202,10 +203,8 @@ function AddProject() {
         galleryUrls.push(url);
       }
 
-      let pdfUrl = null;
-      if (pdfFile) {
-        pdfUrl = await uploadToImgBB(pdfFile);
-      }
+      // 🟢 PDF URL directly saved, no ImgBB upload
+      const finalPdfUrl = pdfUrl.trim();
 
       const newProject = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
@@ -214,11 +213,11 @@ function AddProject() {
         description: formData.description,
         image: imageUrl, 
         gallery: galleryUrls,
-        pdf: pdfUrl,
+        pdf: finalPdfUrl, // 🟢 Save URL string
         status: formData.status,
         tools: formData.tools || [],
         fields: formData.fields || [],
-        featured: false, // 🟢 New projects are not featured by default
+        featured: false,
         createdAt: new Date().toISOString(),
       };
 
@@ -234,13 +233,6 @@ function AddProject() {
       console.error('Upload error:', error);
       alert('❌ Upload failed: ' + error.message);
       setLoading(false);
-    }
-  };
-
-  const handlePdfChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPdfFile(file);
     }
   };
 
@@ -456,15 +448,22 @@ function AddProject() {
                   </select>
                 </div>
 
+                {/* 🟢 UPDATED: PDF URL Input */}
                 <div>
-                  <label className="block text-gray-400 text-xs font-bold uppercase mb-2">PDF Document <span className="text-gray-600 font-normal">(Optional)</span></label>
-                  <div className="flex items-center gap-3 border border-white/10 rounded-xl p-3 bg-[#0a0a0a] cursor-pointer hover:border-purple-500/50 transition">
-                    <input type="file" accept=".pdf" onChange={handlePdfChange} className="hidden" id="pdf-upload" />
-                    <label htmlFor="pdf-upload" className="cursor-pointer flex items-center gap-3 w-full">
-                      <FileText className="w-5 h-5 text-gray-400" />
-                      <span className={pdfFile ? "text-green-400 text-sm truncate" : "text-gray-400 text-sm"}>{pdfFile ? pdfFile.name : "Upload PDF document"}</span>
-                    </label>
+                  <label className="block text-gray-400 text-xs font-bold uppercase mb-2">
+                    PDF Document <span className="text-gray-600 font-normal">(Optional)</span>
+                  </label>
+                  <div className="flex items-center gap-3 border border-white/10 rounded-xl p-3 bg-[#0a0a0a] hover:border-purple-500/50 transition">
+                    <FileText className="w-5 h-5 text-gray-400" />
+                    <input 
+                      type="text" 
+                      value={pdfUrl}
+                      onChange={(e) => setPdfUrl(e.target.value)}
+                      placeholder="Paste Google Drive /preview?rm=minimal link here..."
+                      className="w-full bg-transparent text-white placeholder:text-gray-500 outline-none"
+                    />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">Upload PDF to Google Drive & paste the link here.</p>
                 </div>
               </div>
             </div>
