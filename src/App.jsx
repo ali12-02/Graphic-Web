@@ -34,15 +34,19 @@ import Settings from "./admin/pages/Settings";
 // Admin Layout
 import ProtectedRoute from "./admin/layout/ProtectedRoute";
 
+// 🟢 IMPORT CLOUD SYNC UTILITY
+import { downloadDataFromCloud } from "./utils/cloudSync";
+
 function App() {
   const location = useLocation();
   const [theme, setTheme] = useState({ webBg: "#050505", webText: "#ffffff", webAccent: "#a855f7" });
   
-  // 🟢 NEW: Portal Mode State
+  // 🟢 Portal Mode State
   const [portalMode, setPortalMode] = useState("portfolio");
 
-  // 🟢 Load Theme Config & Portal Mode
+  // 🟢 Load Theme Config & Portal Mode & Cloud Data
   useEffect(() => {
+    // 1. Load Local Theme Config
     const saved = JSON.parse(localStorage.getItem("themeConfig"));
     if (saved) {
       setTheme({
@@ -61,15 +65,37 @@ function App() {
       });
     };
 
-    // 🟢 Load Portal Mode from Settings
+    // 2. Load Portal Mode from Settings
     const mode = localStorage.getItem("portalMode");
     if (mode) setPortalMode(mode);
 
-    // 🟢 Listen to Portal Mode Changes
+    // 3. Listen to Portal Mode Changes
     const handlePortalChange = () => {
       const newMode = localStorage.getItem("portalMode");
       if (newMode) setPortalMode(newMode);
     };
+
+    // 🟢 4. NEW: Download Data from Cloud on Startup
+    const syncDataFromCloud = async () => {
+      const cloudData = await downloadDataFromCloud();
+      if (cloudData) {
+        // Agar cloud par data mila, toh usay localStorage mein save karo
+        localStorage.setItem("websiteThemeConfig", JSON.stringify(cloudData));
+        if (cloudData.buttonConfig) {
+          localStorage.setItem("buttonConfig", JSON.stringify(cloudData.buttonConfig));
+        }
+        if (cloudData.studioStats) {
+          localStorage.setItem("studioStats", JSON.stringify(cloudData.studioStats));
+        }
+        // Force page reload to apply new data
+        window.location.reload();
+      }
+    };
+
+    // Only run cloud sync if there's no local data (prevents constant reloads)
+    if (!localStorage.getItem("websiteThemeConfig")) {
+      syncDataFromCloud();
+    }
 
     window.addEventListener("globalThemeUpdated", handleGlobalUpdate);
     window.addEventListener("portalModeChanged", handlePortalChange);
@@ -92,7 +118,7 @@ function App() {
   return (
     <div style={{ backgroundColor: theme.webBg, color: theme.webText }}>
       {!hideLayout && <MouseReveal />}
-      {!hideLayout && <Navbar portalMode={portalMode} />} {/* 🟢 Pass portalMode to Navbar */}
+      {!hideLayout && <Navbar portalMode={portalMode} />}
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>

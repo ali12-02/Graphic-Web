@@ -3,6 +3,9 @@ import { Save, FileText, Globe, Layout, Smartphone, Mail, MapPin, Phone, Plus, T
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 
+// 🟢 IMPORT CLOUD SYNC
+import { uploadDataToCloud } from "../../utils/cloudSync";
+
 function ContentManager() {
   // 🟢 DEFAULT DATA (Safe Fallback)
   const defaultContent = {
@@ -144,18 +147,26 @@ function ContentManager() {
     }
   }, []);
 
-  const handleSave = () => {
-    // Save data back to individual localStorage keys (to support legacy files)
+  // 🟢 FIX: handleSave ko async banaya aur cloud sync add kiya
+  const handleSave = async () => {
+    // 1. Local save
     localStorage.setItem("websiteThemeConfig", JSON.stringify(content));
     localStorage.setItem("buttonConfig", JSON.stringify(content.buttonConfig));
     localStorage.setItem("studioStats", JSON.stringify(content.studioStats));
 
-    // Dispatch events for all systems
     window.dispatchEvent(new Event("themeUpdated"));
     window.dispatchEvent(new Event("buttonsUpdated"));
     window.dispatchEvent(new Event("statsUpdated"));
     
-    alert("✅ Central Brain Saved! All Website Data Updated Successfully!");
+    // 2. 🟢 Cloud Sync (Upload to GitHub)
+    alert("Saving to local and uploading to cloud...");
+    const success = await uploadDataToCloud(content);
+    
+    if (success) {
+      alert("✅ Data Saved Locally & Synced to Cloud! (All devices will now see this)");
+    } else {
+      alert("⚠️ Saved Locally, but Cloud Sync failed. Check your GitHub Token.");
+    }
   };
 
   // 🟢 DYNAMIC ARRAY HANDLERS
