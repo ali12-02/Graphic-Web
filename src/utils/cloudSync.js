@@ -1,11 +1,10 @@
 // src/utils/cloudSync.js
 
-// 🟢 APNI VALUES YAHAN SET HO CHUKI HAIN
-const GITHUB_USERNAME = "ali12-02";                    
-const GITHUB_TOKEN = "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";  
-const GIST_ID = "09d530bdcdd6f17d144c058e1f8cfc1";     
+const GITHUB_USERNAME = "ali12-02";
+// 🟢 Token ab .env file se uthayega
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN; 
+const GIST_ID = "09d530bdcdd6f17d144c058e1f8cfc1";
 
-// Data Upload karne ka function
 export const uploadDataToCloud = async (data) => {
   try {
     const response = await fetch(`https://api.github.com/gists`, {
@@ -38,14 +37,12 @@ export const uploadDataToCloud = async (data) => {
   }
 };
 
-// Data Download karne ka function
 export const downloadDataFromCloud = async () => {
   try {
     const response = await fetch(`https://api.github.com/gists/${GIST_ID}`);
     if (!response.ok) return null;
 
     const gistData = await response.json();
-    // Extract content from the gist
     if (gistData.files && gistData.files[GIST_ID]) {
       const rawContent = gistData.files[GIST_ID].content;
       return JSON.parse(rawContent);
